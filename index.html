@@ -1,0 +1,1321 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>La Churascaia</title>
+<meta name="theme-color" content="#140a09">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="logo.svg">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Yellowtail&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* DA reprise de @lachurascaia : rouge Chu, boule à facettes, script des affiches, guirlandes du patio */
+:root{--bg:#140a09;--card:#1f1110;--card2:#2a1513;--line:#3d2421;--txt:#f7ece4;--mut:#b99f95;--a:#d3141f;--a-d:#a30d12;--a2:#f5c7a1;--bulb:#ffbf5e;--aon:#fff;--glow:0 0 18px rgba(211,20,31,.55);--fd:'Anton',Impact,sans-serif;--fs:'Yellowtail',cursive;--fb:'Poppins',system-ui,sans-serif;--r:16px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--txt);font:15px/1.5 var(--fb)}
+body{max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:88px;overflow-x:hidden}
+h1,h2,h3,.u{font-family:var(--fd);font-weight:400;letter-spacing:.02em;text-transform:uppercase}
+.s{font-family:var(--fs);text-transform:none;letter-spacing:0;font-weight:400}
+h2{font-size:20px;margin:30px 16px 14px;display:flex;align-items:center;gap:10px}
+h2::before{content:"";width:16px;height:3px;background:var(--a);box-shadow:var(--glow)}
+h2 .s{color:var(--a2);font-size:24px;margin-left:-2px;transform:translateY(2px)}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+.demo{font-size:11px;text-align:center;color:#000;background:#ffd400;font-weight:700;padding:5px}
+section{display:none;animation:in .35s ease}
+section.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(6px)}}
+.pad{padding:0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin:0 16px 12px}
+.btn{display:block;width:100%;text-align:center;padding:14px;border-radius:999px;background:var(--a);color:var(--aon);font:16px var(--fd);text-transform:uppercase;letter-spacing:.08em;text-decoration:none;box-shadow:var(--glow)}
+.btn.ghost{background:transparent;border:1px solid var(--a);box-shadow:none;color:var(--txt)}
+.btn+.btn{margin-top:10px}
+.mut{color:var(--mut);font-size:13px}
+.tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:3px 8px;color:var(--mut);margin:2px 4px 2px 0}
+.tag.ta{border-color:var(--a);color:#ff6b6b}
+.tag.tb{border-color:var(--a2);color:var(--a2)}
+input[type=search],input[type=text],input[type=email],input[type=tel],input[type=date],select,textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--txt);font:inherit;margin-bottom:10px}
+#q,#name{width:calc(100% - 32px);margin:0 16px 12px}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--a2);outline-offset:2px}
+
+/* En-tête : enseigne rouge comme à l'entrée du club */
+header{display:flex;align-items:center;gap:8px;padding:10px 16px;position:sticky;top:0;z-index:8;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.sign{background:var(--a-d);border-radius:8px;padding:6px 10px 5px;box-shadow:0 0 0 1px rgba(255,255,255,.08),0 0 16px rgba(211,20,31,.45);display:flex;align-items:center}
+.sign img{height:19px;display:block;filter:brightness(0) invert(1)}
+.since{font:600 9px var(--fb);letter-spacing:.25em;text-transform:uppercase;color:var(--mut);line-height:1.2}
+header select{margin:0 0 0 auto;width:auto;padding:6px 8px;border-radius:999px;font-size:12px;background:transparent}
+header button{font-size:12px;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:6px 10px;white-space:nowrap}
+
+/* Intro : la boule à facettes descend */
+#splash{position:fixed;inset:0;z-index:30;background:radial-gradient(circle at 50% 40%,#2a0b0a,#0b0505 70%);display:grid;place-items:center;transition:opacity .6s}
+#splash.off{opacity:0;pointer-events:none}
+#splash .w{text-align:center;animation:drop 1.1s cubic-bezier(.2,1.4,.4,1)}
+#splash img.l{height:44px;margin-top:22px;filter:drop-shadow(0 0 14px rgba(211,20,31,.9))}
+@keyframes drop{from{transform:translateY(-60vh)}}
+
+/* Boule à facettes en CSS */
+.ball{--z:120px;width:var(--z);height:var(--z);border-radius:50%;position:relative;margin:0 auto;
+  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.95),rgba(255,255,255,0) 28%),
+    repeating-linear-gradient(0deg,rgba(0,0,0,.45) 0 1px,transparent 1px calc(var(--z)/12)),
+    repeating-linear-gradient(90deg,rgba(0,0,0,.45) 0 1px,transparent 1px calc(var(--z)/12)),
+    conic-gradient(from 0deg,#e9e9ee,#8d8d95,#f7f7fb,#6f6f78,#dcdce4,#9a9aa3,#f3f3f7,#7d7d86,#e9e9ee);
+  background-size:auto,auto,auto,100% 100%;box-shadow:inset -10px -12px 24px rgba(0,0,0,.55),0 0 40px rgba(255,191,94,.35);animation:spin 6s linear infinite}
+.ball::before{content:"";position:absolute;left:50%;bottom:100%;width:2px;height:60vh;background:linear-gradient(transparent,#bbb);transform:translateX(-50%)}
+@keyframes spin{to{background-position:0 0,0 0,calc(var(--z)/12) 0,0 0}}
+.ball.sm::before{display:none}
+.ball.sm{--z:54px}
+
+/* Héro */
+.hero{position:relative;min-height:540px;overflow:hidden;isolation:isolate}
+.hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(20,10,9,.2) 0%,rgba(110,8,12,.35) 35%,var(--bg) 92%)}
+.garland{position:absolute;top:0;left:0;width:100%;height:60px;z-index:1}
+.garland circle{fill:var(--bulb);filter:drop-shadow(0 0 4px var(--bulb));animation:tw 2.4s ease-in-out infinite alternate}
+.garland circle:nth-child(3n){animation-delay:.8s}.garland circle:nth-child(3n+1){animation-delay:1.6s}
+@keyframes tw{from{opacity:1}to{opacity:.45}}
+.specks{position:absolute;inset:-50%;z-index:0;background-image:radial-gradient(2px 2px at 20% 30%,#fff,transparent),radial-gradient(2px 2px at 70% 60%,#fff,transparent),radial-gradient(1.5px 1.5px at 40% 80%,#ffe7c4,transparent),radial-gradient(2px 2px at 85% 20%,#fff,transparent),radial-gradient(1.5px 1.5px at 10% 70%,#ffe7c4,transparent),radial-gradient(2px 2px at 55% 15%,#fff,transparent);background-size:180px 180px;opacity:.55;animation:rot 40s linear infinite;pointer-events:none}
+@keyframes rot{to{transform:rotate(360deg)}}
+.hero .over{position:relative;z-index:2;padding:74px 16px 0;text-align:center}
+.hero .k{font:600 11px var(--fb);letter-spacing:.32em;text-transform:uppercase;color:var(--a2)}
+.hero h1{font:400 50px/1 var(--fs);text-transform:none;letter-spacing:0;margin:10px 0 6px;color:#fff;text-shadow:0 0 10px rgba(211,20,31,.9),0 0 30px rgba(211,20,31,.6)}
+.hero .when{font:20px var(--fd);letter-spacing:.06em;text-transform:uppercase}
+.poster{display:block;width:170px;margin:18px auto 0;border-radius:10px;transform:rotate(-3deg);box-shadow:0 18px 40px rgba(0,0,0,.6),0 0 0 1.5px var(--a),0 0 22px rgba(211,20,31,.55);animation:buzz 7s infinite}
+.count{display:flex;gap:8px;margin:18px 16px 0}
+.count div{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 0;text-align:center}
+.count b{display:block;font:30px var(--fd);color:#fff;text-shadow:var(--glow)}
+.count span{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.12em}
+
+/* Néons qui grésillent (comme Disconnect) */
+.neon{border:1.5px solid var(--a)!important;box-shadow:0 0 6px rgba(211,20,31,.9),0 0 18px rgba(211,20,31,.4),inset 0 0 10px rgba(211,20,31,.25);animation:buzz 7s infinite}
+.neon:nth-child(2n){animation-delay:2.3s}.neon:nth-child(3n){animation-delay:4.1s}
+@keyframes buzz{0%,93%,100%{box-shadow:0 0 6px rgba(211,20,31,.9),0 0 18px rgba(211,20,31,.4),inset 0 0 10px rgba(211,20,31,.25)}94%,96%{box-shadow:none;border-color:#4d0507}95%{box-shadow:0 0 10px rgba(211,20,31,1),0 0 26px rgba(211,20,31,.6)}}
+.cap .neon,.cap .poster,.cap .ball,.cap .specks,.cap .garland circle{animation:none}
+
+/* Histoire */
+.hist{position:relative;overflow:hidden;padding:0}
+.hist img{width:100%;height:190px;object-fit:cover;display:block}
+.hist .in{padding:16px}
+.hist .big{font:400 34px/1 var(--fs);color:var(--a2);margin-bottom:8px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 16px 12px}
+.stats div{text-align:center;padding:12px 2px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.stats b{display:block;font:22px var(--fd);color:#fff}
+.stats span{font-size:10px;line-height:1.2;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:0 16px 12px}
+.legend span{font:15px var(--fd);text-transform:uppercase;letter-spacing:.03em;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+.legend span:nth-child(3n+1){color:var(--a2)}
+.links{display:flex;flex-wrap:wrap;gap:8px;margin:0 16px}
+.links a{flex:1 1 28%;text-align:center;padding:12px 4px;border:1px solid var(--line);border-radius:12px;text-decoration:none;font-size:12px;font-weight:600;background:var(--card)}
+.poll button{display:block;width:100%;text-align:left;position:relative;padding:12px;border:1px solid var(--line);border-radius:10px;margin-top:8px;overflow:hidden}
+.poll i{position:absolute;inset:0 auto 0 0;background:var(--a);opacity:.25;transition:width .6s}
+.poll span{position:relative;display:flex;justify-content:space-between}
+.poll .me{border-color:var(--a)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 16px 12px}
+.tiles button{position:relative;height:130px;border-radius:14px;overflow:hidden;text-align:left;border:1px solid var(--line)}
+.tiles img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.75}
+.tiles span{position:absolute;left:12px;bottom:10px;right:10px;font:24px/1 var(--fs);color:#fff;text-shadow:0 2px 8px #000}
+.tiles button::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(0,0,0,.75))}
+.tiles span{z-index:1}
+
+/* Soirées */
+.ev{display:flex;gap:12px;padding:0;overflow:hidden}
+.ev img{width:108px;object-fit:cover;flex:none;border-right:1.5px solid var(--a)}
+.ev .b{padding:12px 12px 12px 0;flex:1;min-width:0}
+.ev h3{font:26px/1.05 var(--fs);text-transform:none;letter-spacing:0;margin:4px 0;color:#fff}
+.ev .lu{font-size:12px;color:var(--mut);margin:4px 0 8px}
+.been{display:inline-block;font-size:12px;font-weight:600;padding:6px 10px;border-radius:999px;border:1px solid var(--line);text-decoration:none}
+.been.on{background:var(--a);border-color:var(--a);color:var(--aon);box-shadow:var(--glow)}
+.lvl{display:flex;align-items:center;gap:14px}
+.lvl .n{font:44px var(--fd);color:#fff;text-shadow:var(--glow)}
+.lvl b{font:26px var(--fs);color:var(--a2);display:block;line-height:1.1}
+.bar{height:6px;background:var(--line);border-radius:9px;margin-top:10px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--a);box-shadow:var(--glow);transition:width .5s}
+.stars{display:flex;gap:6px;margin:10px 0 12px}
+.stars button{font-size:30px;color:#4a2b28}
+.stars .on{color:var(--bulb);text-shadow:0 0 10px var(--bulb)}
+
+/* Line-up */
+.chips{display:flex;gap:6px;overflow-x:auto;padding:0 16px 10px;scrollbar-width:none}
+.chips button{flex:none;padding:8px 12px;border:1px solid var(--line);border-radius:999px;font-size:12px;font-weight:600;background:var(--card)}
+.chips .on{background:var(--a);border-color:var(--a);color:var(--aon)}
+.art{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.art .av{width:44px;height:44px;border-radius:50%;flex:none;display:grid;place-items:center;font:16px var(--fd);background:var(--a-d);color:#fff}
+.art b{display:block}
+.art .fav{margin-left:auto;font-size:22px;color:var(--mut)}
+.art .fav.on{color:var(--bulb);text-shadow:0 0 10px var(--bulb)}
+
+/* Moments : grille 3 colonnes comme le profil */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.grid a{position:relative;display:block;aspect-ratio:4/5;overflow:hidden;background:#000}
+.grid img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.grid a:active img{transform:scale(1.05)}
+.grid span{position:absolute;left:6px;right:6px;bottom:5px;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;text-shadow:0 1px 4px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vid{position:absolute;top:6px;right:6px;font-size:11px}
+.stories{display:flex;gap:14px;overflow-x:auto;padding:0 16px 16px;scrollbar-width:none}
+.stories button{flex:none;width:72px;text-align:center;font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;letter-spacing:.04em}
+.stories .ring{width:72px;height:72px;border-radius:50%;padding:3px;background:conic-gradient(var(--a),var(--bulb),var(--a));margin-bottom:6px}
+.stories .seen .ring{background:var(--line)}
+.stories img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:3px solid var(--bg);display:block;background:var(--a-d)}
+#story{position:fixed;inset:0;z-index:25;background:#000;display:none;max-width:480px;margin:0 auto;color:#fff}
+#story.on{display:block}
+#story>img,#story>video{width:100%;height:100%;object-fit:contain;background:#000;display:block}
+#story>video[hidden],#story>img[hidden]{display:none}
+#st-txt{position:absolute;left:16px;right:16px;bottom:120px;z-index:2;text-align:center;font:30px/1.15 var(--fs);color:#fff;text-shadow:0 2px 12px #000,0 0 18px rgba(211,20,31,.8)}
+/* Onglet Stories en direct */
+.livepill{display:inline-flex;align-items:center;gap:6px;margin-left:auto;font:700 10px var(--fb);letter-spacing:.15em;color:#fff;background:var(--a);border-radius:999px;padding:4px 9px;box-shadow:var(--glow)}
+.livepill i{width:7px;height:7px;border-radius:50%;background:#fff;animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.25}}
+.prof{display:flex;align-items:center;gap:14px}
+.prof .av{width:74px;height:74px;border-radius:50%;padding:3px;background:conic-gradient(var(--a),var(--bulb),var(--a));flex:none}
+.prof .av.seen{background:var(--line)}
+.prof .av img{width:100%;height:100%;border-radius:50%;border:3px solid var(--card);display:block}
+.lgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 16px 12px}
+.lgrid button{position:relative;aspect-ratio:9/16;border-radius:14px;overflow:hidden;background:#000;border:1.5px solid var(--line);text-align:left}
+.lgrid button.new{border-color:var(--a);box-shadow:0 0 6px rgba(211,20,31,.9),0 0 18px rgba(211,20,31,.4)}
+.lgrid img,.lgrid video{width:100%;height:100%;object-fit:cover;display:block}
+.lgrid .t{position:absolute;top:8px;left:8px;font:700 10px var(--fb);background:rgba(0,0,0,.6);border-radius:999px;padding:3px 8px}
+.lgrid .n{position:absolute;top:8px;right:8px;font:700 9px var(--fb);letter-spacing:.1em;background:var(--a);border-radius:999px;padding:3px 7px}
+.lgrid .c{position:absolute;left:0;right:0;bottom:0;padding:30px 10px 10px;background:linear-gradient(transparent,rgba(0,0,0,.85));font:20px/1.1 var(--fs);color:#fff}
+.lgrid .v{position:absolute;top:34px;left:8px;font-size:11px}
+.how div{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line)}
+.how div:last-child{border:0}
+.how b{flex:none;width:26px;height:26px;border-radius:50%;background:var(--a-d);display:grid;place-items:center;font:14px var(--fd)}
+nav button{position:relative}
+nav .dot{position:absolute;top:-2px;left:calc(50% + 6px);min-width:16px;height:16px;border-radius:9px;background:var(--a);color:#fff;font:700 9px/16px var(--fb);padding:0 4px;box-shadow:0 0 0 2px var(--bg),var(--glow)}
+nav .dot[hidden]{display:none}
+#notif{position:fixed;left:50%;top:10px;transform:translate(-50%,-140%);width:calc(100% - 20px);max-width:460px;z-index:35;display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:18px;background:rgba(38,22,20,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);box-shadow:0 12px 30px rgba(0,0,0,.5);transition:transform .45s cubic-bezier(.2,1.3,.4,1);text-align:left}
+#notif.on{transform:translate(-50%,0)}
+#notif img{width:40px;height:40px;border-radius:50%}
+#notif b{display:block;font-size:13px}
+#notif span{font-size:12px;color:var(--mut)}
+#story .bars{position:absolute;top:10px;left:10px;right:10px;display:flex;gap:4px;z-index:2}
+#story .bars i{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.3);overflow:hidden}
+#story .bars i b{display:block;height:100%;width:0;background:#fff}
+#story .bars i.done b{width:100%}
+#story .bars i.cur b{animation:fill 5s linear forwards}
+@keyframes fill{to{width:100%}}
+#story .hd{position:absolute;top:22px;left:12px;right:12px;display:flex;align-items:center;gap:10px;z-index:2;font-weight:700;text-shadow:0 1px 4px #000}
+#story .hd img{width:32px;height:32px;border-radius:50%}
+#story .hd button{margin-left:auto;font-size:28px;line-height:1;color:#fff}
+#story .nav{position:absolute;inset:70px 0 90px;display:flex;z-index:1}
+#story .nav button{flex:1}
+#story .ft{position:absolute;left:0;right:0;bottom:0;padding:40px 16px calc(18px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(0,0,0,.85));text-align:center;font-size:12px;color:#ccc;z-index:2}
+
+/* Billet, programme, infos */
+.ticket{background:radial-gradient(circle at 50% 0%,rgba(211,20,31,.35),transparent 60%),var(--card);border-radius:18px;margin:0 16px 12px;padding:18px;text-align:center}
+.ticket .s{font-size:34px;line-height:1.05;color:#fff;margin-top:6px}
+canvas.qr{width:96px;height:96px;background:#fff;border:6px solid #fff;border-radius:10px;margin:14px auto 8px;display:block;image-rendering:pixelated;cursor:zoom-in;transition:width .25s,height .25s}
+canvas.qr.big{width:230px;height:230px;cursor:zoom-out}
+.tl{margin:0 16px 12px 24px;padding-left:18px;border-left:2px solid var(--line)}
+.tl div{position:relative;padding:8px 0 8px 6px}
+.tl div::before{content:"";position:absolute;left:-25px;top:13px;width:10px;height:10px;border-radius:50%;background:var(--line)}
+.tl .live::before{background:var(--a);box-shadow:var(--glow)}
+.tl .past{opacity:.45}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border:0}
+.row .mut{text-align:right}
+details{border-bottom:1px solid var(--line);padding:12px 0}
+details:last-child{border:0}
+summary{font-weight:600;cursor:pointer}
+details p{margin-top:6px}
+#meet button.on{background:var(--a);border-color:var(--a);color:var(--aon)}
+.bus{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.bus:last-child{border:0}
+.bus>b{font-size:22px;width:58px}
+.bus>div{flex:1}
+.wx-now{display:flex;align-items:center;gap:14px;margin:4px 0 12px}
+.wx-now .t{font:46px var(--fd);line-height:1}
+.wx-now .e{font-size:44px}
+.wx-days{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.wx-days>div{flex:1 0 54px;text-align:center;padding:10px 2px;border:1px solid var(--line);border-radius:12px;font-size:11px}
+.wx-days>div:first-child{border-color:var(--a)}
+.wx-days b{display:block;font-size:12px}
+.wx-days .e{font-size:20px;margin:4px 0}
+.wx-days .r{color:#7fb8ff;font-size:10px}
+
+/* Carte de fidélité */
+.fid{position:relative;border-radius:18px;padding:18px;margin:0 16px 12px;background:radial-gradient(circle at 85% 15%,rgba(255,191,94,.25),transparent 40%),linear-gradient(135deg,#7d0a0e,#3b0807 60%,#1f1110);overflow:hidden}
+.fid .top{display:flex;align-items:center;gap:10px}
+.fid .top img{width:44px;height:44px;border-radius:50%}
+.fid .top b{display:block;font:26px/1 var(--fs)}
+.fid .no{margin-left:auto;font:600 11px var(--fb);letter-spacing:.15em;color:var(--a2)}
+.stamps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:16px 0 10px}
+.stamps i{aspect-ratio:1;border-radius:50%;border:1.5px dashed rgba(255,255,255,.25);display:grid;place-items:center;font-style:normal;font-size:12px;color:var(--mut)}
+.stamps i.on{border:0;background:center/cover url(logo.svg);box-shadow:0 0 12px rgba(255,191,94,.6)}
+.stamps i.gift{border-color:var(--bulb);color:var(--bulb)}
+.fid canvas.qr{float:right;width:76px;height:76px;margin:0 0 0 12px;border-width:4px}
+.fid canvas.qr.big{width:160px;height:160px}
+.mini{display:flex;align-items:center;gap:12px;cursor:pointer}
+.mini .dots{display:flex;gap:4px;margin-top:6px}
+.mini .dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.mini .dots i.on{background:var(--a);box-shadow:var(--glow)}
+
+/* Table VIP */
+.plan{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;padding:14px;border-radius:16px;background:var(--card);border:1px solid var(--line)}
+.plan .dj,.plan .floor,.plan .bars{grid-column:span 6;text-align:center;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);border:1px dashed var(--line);border-radius:10px;padding:8px}
+.plan .floor{grid-column:2 / span 4;grid-row:span 2;display:grid;place-items:center;background:radial-gradient(circle,rgba(255,255,255,.08) 1px,transparent 1.5px) 0 0/10px 10px}
+.tbl{aspect-ratio:1;border-radius:50%;border:1.5px solid var(--a2);font:700 11px var(--fb);display:grid;place-items:center;background:var(--card2)}
+.tbl.vip{border-color:var(--a);border-radius:12px}
+.tbl.pris{opacity:.3;text-decoration:line-through;cursor:not-allowed}
+.tbl.sel{background:var(--a);color:var(--aon);box-shadow:var(--glow)}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--mut);margin:10px 0 0}
+.leg i{display:inline-block;width:10px;height:10px;border-radius:50%;border:1.5px solid var(--a2);margin-right:5px;vertical-align:-1px}
+.leg i.v{border-color:var(--a);border-radius:3px}.leg i.p{opacity:.3}
+.step{display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card2);margin-bottom:10px}
+.step button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);font-size:18px}
+.resa{border-left:3px solid var(--a);padding-left:10px;margin-top:10px}
+
+/* Boutique */
+.shop{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 16px 12px}
+.shop div{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.shop img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
+.shop .in{padding:10px}
+.shop b{display:block;font-size:13px;line-height:1.25}
+.shop s{color:var(--mut);font-size:12px;margin-left:4px}
+.shop .p{font:18px var(--fd);color:var(--a2)}
+.shop button{width:100%;margin-top:8px;padding:8px;border-radius:999px;border:1px solid var(--a);font-size:12px;font-weight:600}
+.shop button.on{background:var(--a);color:#fff}
+/* Privatisation */
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 12px}
+.facts div{text-align:center;padding:14px 4px;border-radius:12px;background:var(--card);border:1px solid var(--line)}
+.facts b{display:block;font:24px var(--fd);color:#fff}
+/* Concours */
+.prize{position:relative;overflow:hidden;padding:0}
+.prize img{width:100%;height:220px;object-fit:cover;object-position:center 20%;display:block}
+.prize .in{padding:16px}
+.prize>.tag{position:absolute;top:10px;left:10px;margin:0;background:var(--a);border-color:var(--a);color:#fff;box-shadow:var(--glow)}
+/* Espace gérant */
+.sw{width:46px;height:26px;border-radius:99px;background:var(--line);position:relative;flex:none;transition:.2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+.sw.on{background:var(--a)}
+.sw.on::after{left:23px}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 16px 12px}
+.kpi div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.kpi b{display:block;font:28px var(--fd)}
+.hb{display:flex;align-items:center;gap:8px;font-size:12px;margin-top:8px}
+.hb span:first-child{width:120px;flex:none}
+.hb i{height:8px;background:var(--a);border-radius:4px}
+#lock{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:28px;text-align:center;background:color-mix(in srgb,var(--bg) 96%,transparent)}
+#lock[hidden]{display:none}
+
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;display:flex;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px 2px calc(8px + env(safe-area-inset-bottom));z-index:9}
+nav button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9px;letter-spacing:-.01em;font-weight:600;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+nav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8}
+nav .on{color:#fff}
+nav .on svg{stroke:var(--a);filter:drop-shadow(0 0 6px rgba(211,20,31,.8))}
+#toast{position:fixed;left:50%;bottom:96px;transform:translate(-50%,20px);background:#fff;color:#000;padding:10px 16px;border-radius:999px;font-size:13px;font-weight:600;opacity:0;transition:.3s;pointer-events:none;z-index:40;max-width:92vw;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="splash"><div class="w"><div class="ball"></div><img class="l" src="logo-rouge.png" alt="La Churascaia"></div></div>
+<div class="demo">Démo · maquette non officielle</div>
+<header>
+  <div class="sign"><img src="logo-rouge.png" alt="La Churascaia"></div>
+  <div class="since">Depuis<br>1965</div>
+  <select id="lang" aria-label="Langue" onchange="setLang(this.value)"><option value="fr">FR</option><option value="en">EN</option><option value="es">ES</option><option value="de">DE</option></select>
+  <button onclick="go('orga')">Gérant</button>
+</header>
+
+<section id="home" class="on">
+  <div class="hero">
+    <img src="site-DSC05099.jpg" alt="">
+    <div class="specks"></div>
+    <svg class="garland" viewBox="0 0 400 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 4 Q100 44 200 8 Q300 44 400 4" stroke="#3a2a22" stroke-width="1.5" fill="none"/><g id="bulbs"></g></svg>
+    <div class="over">
+      <div class="k">Prochaine soirée</div>
+      <h1 id="nx-name"></h1>
+      <div class="when" id="nx-when"></div>
+      <div class="mut" id="nx-lu"></div>
+      <img class="poster" id="nx-poster" alt="Affiche de la soirée" onclick="go('events')">
+    </div>
+  </div>
+  <div class="count" id="count"></div>
+  <div class="pad" style="margin-top:14px"><a class="btn" id="nx-buy" target="_blank" rel="noopener">Prendre mon billet</a><button class="btn ghost" onclick="ics()">Ajouter à mon agenda</button></div>
+  <div class="card mini" style="margin-top:12px" onclick="go('moi')"><img src="logo.svg" alt="" style="width:40px;height:40px;border-radius:50%"><div style="flex:1"><b class="u" style="font-size:15px">Ma carte Chu</b><div class="mut" id="fid-mini"></div><div class="dots" id="fid-dots"></div></div><span class="mut">›</span></div>
+  <div class="pad" style="margin:0 0 4px"><button class="btn ghost" onclick="go('vip')">Réserver une table</button><button class="btn ghost" onclick="guest()" id="guest-bt">M'inscrire sur la guest list</button></div>
+
+  <h2>La Chu <span class="s">depuis 1965</span></h2>
+  <div class="card hist neon">
+    <img src="site-DSC00015.jpg" alt="La salle de La Churascaia">
+    <div class="in">
+      <div class="big">Un club mythique en pleine Camargue</div>
+      <p class="mut">Fondée en 1965 par le manadier Jean Lafont, à Vauvert, à 10 minutes d'Aigues-Mortes. Un patio au milieu des pins l'été, une salle aux affiches emblématiques l'hiver, et toutes les générations sous la même boule à facettes.</p>
+    </div>
+  </div>
+  <div class="stats"><div><b>1965</b><span class="mut">ouverture</span></div><div><b>61e</b><span class="mut">saison</span></div><div><b>25,8 k</b><span class="mut">abonnés IG</span></div><div><b>6</b><span class="mut">bars</span></div></div>
+  <h2>Ils sont passés <span class="s">par ici</span></h2>
+  <div class="legend" id="legend"></div>
+
+  <h2>Explorer</h2>
+  <div class="tiles">
+    <button onclick="go('shop')"><img src="shop-micasa.jpg" alt=""><span>La boutique</span></button>
+    <button onclick="go('priv')"><img src="site-DSC09616.jpg" alt=""><span>Privatiser la Chu</span></button>
+    <button onclick="go('moments')"><img src="14.jpg" alt=""><span>Le Patio 2026</span></button>
+    <button onclick="go('concours')"><img src="2.jpg" alt=""><span>Jeu concours</span></button>
+  </div>
+
+  <h2>Qui pour <span class="s">la prochaine ?</span></h2>
+  <div class="card poll" id="poll"></div>
+
+  <h2>La playlist</h2>
+  <div class="card mini" onclick="window.open('https://open.spotify.com/search/La%20Churascaia','_blank','noopener')">
+    <div class="ball sm" style="flex:none"></div>
+    <div style="flex:1"><b class="u" style="font-size:15px">Les classiques de la Chu</b><div class="mut">Des années 70 aux années 2000 : de Dalida à Madonna, des Gipsy Kings aux Daft Punk.</div></div><span class="mut">›</span>
+  </div>
+
+  <h2>Nous suivre</h2>
+  <div class="links" id="links"></div>
+</section>
+
+<section id="live">
+  <h2>Stories <span class="livepill"><i></i>EN DIRECT</span></h2>
+  <p class="mut pad" style="margin:-4px 0 14px">Chaque story publiée sur @lachurascaia arrive ici toute seule, et reste 24 h, comme sur Instagram.</p>
+  <div class="card prof">
+    <div class="av" id="lv-av"><img src="logo.svg" alt=""></div>
+    <div style="flex:1;min-width:0"><b>lachurascaia</b><div class="mut" id="lv-sum"></div></div>
+  </div>
+  <div class="pad" style="margin-bottom:12px"><button class="btn" id="lv-all" onclick="openLive(0)">Tout regarder</button></div>
+  <div class="lgrid" id="lv-grid"></div>
+  <div class="card row" style="padding:12px 16px"><span>Me prévenir à chaque nouvelle story</span><button class="sw" data-k="story" aria-label="Me prévenir à chaque nouvelle story"></button></div>
+  <h2>Comment ça marche</h2>
+  <div class="card how">
+    <div><b>1</b><span>Le gérant publie sa story sur Instagram, comme d'habitude. Rien de plus à faire.</span></div>
+    <div><b>2</b><span>L'app la récupère toute seule, en moins de 2 minutes.</span></div>
+    <div><b>3</b><span>Les clients la voient ici et reçoivent une notification.</span></div>
+    <div><b>4</b><span>Elle disparaît au bout de 24 h, comme sur Instagram.</span></div>
+  </div>
+  <div class="pad"><button class="btn ghost" onclick="simStory()">▶ Démo : simuler une story du gérant</button><p class="mut" style="margin-top:8px;text-align:center" id="lv-note"></p></div>
+</section>
+
+<section id="events">
+  <h2>Mon passeport</h2>
+  <div class="card">
+    <div class="lvl"><div class="n" id="pp-n">0</div><div><b id="pp-lvl"></b><div class="mut" id="pp-txt"></div></div></div>
+    <div class="bar"><i id="pp-bar"></i></div>
+  </div>
+  <h2>À venir</h2><div id="ev-next"></div>
+  <h2>Note la dernière nuit</h2>
+  <div class="card">
+    <div class="mut" id="last-name"></div>
+    <div class="stars" id="stars"></div>
+    <input type="text" id="review" placeholder="Un mot sur la soirée ?">
+    <button class="btn" onclick="sendReview()">Envoyer mon avis</button>
+  </div>
+  <h2>Déjà vécues</h2><div id="ev-past"></div>
+  <p class="mut pad">Coche « J'y étais » pour faire grimper ton niveau.</p>
+</section>
+
+<section id="lineup">
+  <h2>Line-up</h2>
+  <div class="chips" id="chips"></div>
+  <input type="search" id="q" placeholder="Chercher un artiste…" oninput="renderArtists()">
+  <div id="arts"></div>
+</section>
+
+<section id="moments">
+  <h2>À la une</h2>
+  <div class="stories" id="stories"></div>
+  <h2>Moments</h2>
+  <p class="mut pad" style="margin:-4px 0 12px">Les dernières publications de @lachurascaia. Touche une photo pour l'ouvrir sur Instagram.</p>
+  <div class="chips" id="mchips"><button data-k="all" class="on">Tout</button><button data-k="p">Photos</button><button data-k="reel">▶ Vidéos</button></div>
+  <div class="grid" id="grid"></div>
+  <h2>La salle</h2>
+  <div class="grid" id="salle"></div>
+</section>
+
+<section id="concours">
+  <h2>Jeu concours</h2>
+  <div class="card prize neon">
+    <img id="ct-img" alt=""><span class="tag">À gagner</span>
+    <div class="in">
+      <b class="s" style="font-size:30px;line-height:1.1;display:block" id="ct-titre"></b>
+      <p class="mut" style="margin:6px 0 4px" id="ct-txt"></p>
+      <p class="mut" id="ct-info" style="margin-bottom:12px"></p>
+      <button class="btn" id="ct-btn" onclick="contest()">Je participe</button>
+      <button class="btn ghost" onclick="contestShare()">Inviter un pote (+1 chance)</button>
+      <p class="mut" style="margin-top:10px;font-size:11px">Concours fictif (démo). Le vrai règlement est fourni par le club.</p>
+    </div>
+  </div>
+  <div class="card"><b class="u" style="font-size:15px">Comment ça marche</b>
+    <div class="row"><span>1. Je participe</span><span class="mut">1 chance</span></div>
+    <div class="row"><span>2. J'invite mes potes</span><span class="mut">+1 chance par pote</span></div>
+    <div class="row"><span>3. Tirage au sort</span><span class="mut">résultat dans l'app</span></div>
+  </div>
+</section>
+
+<section id="jourj">
+  <h2>Mon billet</h2>
+  <div class="ticket neon">
+    <div class="u" style="font-size:12px;color:#ff6b6b;letter-spacing:.25em">La Churascaia · Vauvert</div>
+    <div class="s" id="tk-ev"></div>
+    <div class="u" style="font-size:17px;margin-top:4px" id="tk-when"></div>
+    <canvas class="qr" id="qr" width="29" height="29" onclick="this.classList.toggle('big')"></canvas>
+    <div class="mut"><span>Billet de démonstration</span> · <span id="tk-name">Invité·e</span></div>
+    <div class="mut" style="font-size:11px;margin-top:4px">Touche le QR pour l'agrandir.</div>
+  </div>
+  <div class="pad" style="margin-bottom:12px"><button class="btn ghost" onclick="toast('Wallet : dans la version officielle')">Ajouter au Wallet</button></div>
+  <div class="card">
+    <b class="u" style="font-size:15px">Pas encore de billet ?</b>
+    <p class="mut" style="margin:6px 0 12px">Si c'est complet, inscris-toi : une place libérée, et tu es prévenu·e en premier.</p>
+    <button class="btn ghost" id="wait" onclick="waitlist()">Liste d'attente</button>
+  </div>
+  <h2>Programme</h2>
+  <p class="mut pad" style="margin:-4px 0 10px">Horaires indicatifs (démo) : le club les annonce sur Instagram.</p>
+  <div class="tl" id="tl"></div>
+  <h2>Navette</h2>
+  <div class="card">
+    <p class="mut" style="margin-bottom:6px">Rentre sans prendre le volant. Départs, prix et places d'exemple (démo).</p>
+    <div id="bus"></div>
+  </div>
+  <h2 id="meteo-t">Météo</h2>
+  <div class="card" id="meteo"><span class="mut">Chargement…</span></div>
+  <h2>Y aller</h2>
+  <div class="card">
+    <div class="row"><span>📍 La Churascaia</span><span class="mut">Sainte-Anne, 30600 Vauvert</span></div>
+    <div class="row"><span>🕚 Horaires</span><span class="mut" id="go-h"></span></div>
+    <div class="row"><span>📞 Réservation</span><a class="mut" href="tel:+33674940109">06 74 94 01 09</a></div>
+    <a class="btn" style="margin-top:12px" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=La%20Churascaia%20Vauvert">Itinéraire</a>
+  </div>
+  <h2>Retrouver ma bande</h2>
+  <div class="card">
+    <p class="mut" style="margin-bottom:10px">Choisis un point de rendez-vous et envoie-le à tes potes.</p>
+    <div class="chips" id="meet" style="padding:0 0 12px;flex-wrap:wrap"></div>
+    <button class="btn" onclick="shareMeet()">Envoyer à ma bande</button>
+  </div>
+  <h2>Infos pratiques</h2>
+  <div class="card" id="faq"></div>
+  <h2>Besoin d'aide ?</h2>
+  <div class="card">
+    <p class="mut" style="margin-bottom:12px">Un souci sur place ? Va voir la sécurité à l'entrée, ou appelle les secours.</p>
+    <a class="btn" href="tel:112">Appeler le 112</a>
+  </div>
+</section>
+
+<section id="vip">
+  <h2>Réserver une table</h2>
+  <p class="mut pad" style="margin:-4px 0 12px">Choisis ta table sur le plan, puis envoie ta demande. Plan et prix d'exemple (démo) : le club met les siens.</p>
+  <div class="pad"><div class="plan" id="plan"></div>
+  <div class="leg"><span><i></i>Table</span><span><i class="v"></i>Carré VIP</span><span><i class="p"></i>Déjà réservée</span></div></div>
+  <div class="card" style="margin-top:14px">
+    <div class="row"><span>Table choisie</span><b id="vip-t">—</b></div>
+    <select id="vip-ev" aria-label="Soirée"></select>
+    <div class="step"><span>Personnes</span><span style="display:flex;align-items:center;gap:12px"><button onclick="nb(-1)" aria-label="Moins">−</button><b id="vip-n">4</b><button onclick="nb(1)" aria-label="Plus">+</button></span></div>
+    <select id="vip-f" aria-label="Formule"></select>
+    <input type="text" id="vip-msg" placeholder="Un anniversaire ? Une demande ?">
+    <button class="btn" onclick="sendVip()">Envoyer ma demande</button>
+    <p class="mut" style="margin-top:8px;text-align:center">Le club te confirme par message (démo : rien n'est envoyé).</p>
+  </div>
+  <h2>Mes réservations</h2><div class="card" id="my-resa"></div>
+  <div class="pad"><button class="btn ghost" onclick="go('home')">Retour</button></div>
+</section>
+
+<section id="shop">
+  <h2>La boutique</h2>
+  <p class="mut pad" style="margin:-4px 0 12px">Les vrais articles et prix de lachurascaia.fr. Réserve ici, récupère au vestiaire (démo).</p>
+  <div class="shop" id="shop-list"></div>
+  <div class="pad"><a class="btn" href="https://www.lachurascaia.fr/boutique/" target="_blank" rel="noopener">Voir la boutique en ligne</a><button class="btn ghost" onclick="go('home')">Retour</button></div>
+</section>
+
+<section id="priv">
+  <h2>Privatiser la Chu</h2>
+  <div class="card hist neon"><img src="site-DSC09616.jpg" alt=""><div class="in"><div class="big">Un lieu unique pour votre soirée</div><p class="mut">Anniversaire, séminaire, mariage : un lieu authentique, avec son patio au milieu des pins méditerranéens.</p></div></div>
+  <div class="facts"><div><b>400 m²</b><span class="mut">patio, 3 bars</span></div><div><b>550 m²</b><span class="mut">de bâtiment</span></div><div><b>3</b><span class="mut">bars intérieurs</span></div></div>
+  <div class="card">
+    <b class="u" style="font-size:15px">Demande de devis</b>
+    <div style="margin-top:10px"></div>
+    <input type="text" id="pv-nom" placeholder="Votre nom" autocomplete="name">
+    <input type="tel" id="pv-tel" placeholder="Votre téléphone" autocomplete="tel">
+    <select id="pv-type" aria-label="Objet de la demande"><option>Anniversaire</option><option>Séminaire d'entreprise</option><option>Mariage</option><option>Autre événement</option></select>
+    <input type="date" id="pv-date" aria-label="Date souhaitée">
+    <div class="step"><span>Invités</span><span style="display:flex;align-items:center;gap:12px"><button onclick="pvN(-10)" aria-label="Moins">−</button><b id="pv-n">80</b><button onclick="pvN(10)" aria-label="Plus">+</button></span></div>
+    <button class="btn" onclick="sendPriv()">Envoyer ma demande</button>
+    <p class="mut" style="margin-top:8px;text-align:center">Démo : rien n'est envoyé. En vrai, la demande arrive au club.</p>
+  </div>
+  <div class="pad"><a class="btn ghost" href="tel:+33674940109">Appeler le club</a><button class="btn ghost" onclick="go('home')">Retour</button></div>
+</section>
+
+<section id="moi">
+  <h2>Mon profil</h2>
+  <input type="text" id="name" placeholder="Ton prénom" oninput="setName(this.value)">
+  <h2>Ma carte Chu</h2>
+  <div class="fid neon">
+    <div class="top"><img src="logo.svg" alt=""><div><b>La Churascaia</b><span class="mut" id="fid-name"></span></div><span class="no" id="fid-no"></span></div>
+    <div class="stamps" id="stamps"></div>
+    <canvas class="qr" id="fid-qr" width="21" height="21" onclick="this.classList.toggle('big')"></canvas>
+    <div class="mut" id="fid-txt"></div>
+    <div style="clear:both"></div>
+  </div>
+  <div class="card" id="rewards"></div>
+  <div class="pad" style="margin-bottom:12px"><button class="btn" onclick="stamp()">Faire tamponner ma carte</button><button class="btn ghost" onclick="toast('Wallet : dans la version officielle')">Ajouter au Wallet</button><p class="mut" style="margin-top:8px;text-align:center">Démo : en vrai, le staff scanne ton QR à l'entrée.</p></div>
+  <h2>Parrainage</h2>
+  <div class="card">
+    <p class="mut">Invite un pote : à sa première soirée, vous gagnez chacun un tampon.</p>
+    <div class="row"><span>Mon code</span><b class="u" id="ref-code" style="font-size:20px;letter-spacing:.1em"></b></div>
+    <button class="btn ghost" onclick="refer()">Envoyer mon code</button>
+  </div>
+  <div class="card" id="me-sum"></div>
+  <h2 id="wx-t">Météo</h2>
+  <div class="card" id="wx"><span class="mut">Chargement…</span></div>
+  <h2>Raccourcis</h2>
+  <div class="links">
+    <a href="#" onclick="go('concours');return false">Jeu concours</a>
+    <a href="#" onclick="go('vip');return false">Table VIP</a>
+    <a href="#" onclick="go('shop');return false">Boutique</a>
+    <a href="#" onclick="go('priv');return false">Privatiser</a>
+    <a href="#" onclick="ics();return false">Mon agenda</a>
+    <a href="#" onclick="install();return false">Sur mon écran</a>
+  </div>
+  <h2>Réglages</h2>
+  <div class="card">
+    <div class="row"><span>Nouvelles soirées</span><button class="sw" data-k="alert" aria-label="Nouvelles soirées"></button></div>
+    <div class="row"><span>Mes artistes favoris</span><button class="sw" data-k="fav" aria-label="Mes artistes favoris"></button></div>
+    <div class="row"><span>Rappel le jour J</span><button class="sw" data-k="dday" aria-label="Rappel le jour J"></button></div>
+  </div>
+  <div class="pad"><button class="btn ghost" onclick="install()">Mettre l'app sur mon écran</button><button class="btn ghost" onclick="wipe()">Effacer mes données</button></div>
+</section>
+
+<section id="orga">
+  <h2>Espace gérant</h2>
+  <p class="mut pad" style="margin:-4px 0 12px">Chiffres fictifs pour la démo.</p>
+  <div class="kpi" id="kpi"></div>
+  <div class="card">
+    <b class="u" style="font-size:15px">Abonnement</b>
+    <div class="row"><span>29 € / mois <span class="mut">(exemple de tarif)</span></span><b id="sub-st"></b></div>
+    <p class="mut">Les clients utilisent l'app gratuitement, seul le club s'abonne.</p>
+    <button class="btn ghost" style="margin-top:10px" onclick="toggleSub()" id="sub-bt"></button>
+  </div>
+  <div class="card">
+    <b class="u" style="font-size:15px">Ajouter une soirée</b>
+    <div style="margin-top:10px"></div>
+    <input type="text" id="ad-nom" placeholder="Nom de la soirée">
+    <input type="date" id="ad-date" aria-label="Date">
+    <input type="text" id="ad-art" placeholder="Artistes, séparés par une virgule">
+    <button class="btn" onclick="addEvent()">Ajouter la soirée</button>
+    <div id="ad-list"></div>
+  </div>
+  <div class="card">
+    <b class="u" style="font-size:15px">Réservations</b>
+    <div id="g-resa"></div>
+    <div class="row"><span>Guest list (prochaine soirée)</span><b id="g-guest"></b></div>
+    <div class="row"><span>Demandes de privatisation</span><b id="g-priv"></b></div>
+    <div class="row"><span>Boutique : à retirer au vestiaire</span><b id="g-shop"></b></div>
+  </div>
+  <div class="card">
+    <b class="u" style="font-size:15px">Carte Chu</b>
+    <div class="row"><span>Cartes actives</span><b>2 140</b></div><div class="row"><span>Tampons cette semaine</span><b>612</b></div><div class="row"><span>Récompenses données</span><b>74</b></div>
+    <button class="btn ghost" style="margin-top:10px" onclick="toast('Scanner : dans la version officielle')">Tamponner une carte (scanner)</button>
+  </div>
+  <div class="card"><b class="u" style="font-size:15px">D'où vient le public</b><div id="cities"></div></div>
+  <div class="card"><b class="u" style="font-size:15px">Âge du public</b><div id="ages"></div></div>
+  <div class="card"><b class="u" style="font-size:15px">Artistes les plus attendus</b><div id="wanted"></div></div>
+  <div class="card">
+    <b class="u" style="font-size:15px">Stories Instagram</b>
+    <div class="row"><span>Synchronisation</span><b id="g-sync"></b></div>
+    <div class="row"><span>Stories en ligne</span><b id="g-live"></b></div>
+    <div class="row"><span>Vues dans l'app (24 h)</span><b>1 362</b></div>
+    <input type="text" id="sim-txt" placeholder="Texte de la story (facultatif)" style="margin-top:10px">
+    <button class="btn" onclick="simStory()">Publier une story (simulation)</button>
+    <p class="mut" style="margin-top:8px">En vrai : le gérant publie sur Instagram, l'app la reprend toute seule.</p>
+  </div>
+  <div class="card">
+    <b class="u" style="font-size:15px">Notification</b>
+    <div style="margin-top:10px"></div>
+    <input type="text" id="push" placeholder="Ex : Last call, plus que 50 places !">
+    <button class="btn" onclick="sendPush()">Envoyer aux abonnés</button>
+    <button class="btn ghost" onclick="toast('Scanner : dans la version officielle')">Scanner les billets</button>
+  </div>
+</section>
+
+<div id="lock" hidden><div><h2 style="justify-content:center">Application suspendue</h2><p class="mut" style="margin:8px 0 16px">L'abonnement du club est inactif (simulation). Tout revient dès que le gérant le réactive.</p><button class="btn" onclick="toggleSub()">Réactiver (démo)</button></div></div>
+<nav id="nav">
+  <button data-t="home" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Accueil</button>
+  <button data-t="live"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-dasharray="4.2 2.4"/><path d="M12 8v8M8 12h8"/></svg>Stories<span class="dot" id="lv-dot" hidden></span></button>
+  <button data-t="events"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Soirées</button>
+  <button data-t="lineup"><svg viewBox="0 0 24 24"><circle cx="9" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M12 18V5l9-2v13"/></svg>Line-up</button>
+  <button data-t="moments"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4"/></svg>Moments</button>
+  <button data-t="concours"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M3 12h18M12 8v13M12 8c-2-4-6-4-6-1.5S10 8 12 8zm0 0c2-4 6-4 6-1.5S14 8 12 8z"/></svg>Concours</button>
+  <button data-t="jourj"><svg viewBox="0 0 24 24"><path d="M4 7h16v4a2 2 0 0 0 0 4v4H4v-4a2 2 0 0 0 0-4z"/></svg>Jour J</button>
+  <button data-t="moi"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Moi</button>
+</nav>
+<div id="story" role="dialog" aria-label="Story">
+  <img id="st-img" alt=""><video id="st-vid" playsinline muted hidden></video><div id="st-txt"></div>
+  <div class="bars" id="st-bars"></div>
+  <div class="hd"><img src="logo.svg" alt=""><span id="st-name"></span><button onclick="closeStory()" aria-label="Fermer">×</button></div>
+  <div class="nav"><button onclick="stStep(-1)" aria-label="Précédente"></button><button onclick="stStep(1)" aria-label="Suivante"></button></div>
+  <div class="ft" id="st-ft">Démo : dans la version officielle, les vraies stories Instagram de @lachurascaia arrivent ici automatiquement.</div>
+</div>
+<button id="notif" onclick="openNotif()"><img src="logo.svg" alt=""><div><b>La Churascaia a publié une story</b><span>à l'instant · touche pour la voir</span></div></button>
+<div id="toast" role="status"></div>
+
+<script>
+// ===== Données réelles (Instagram @lachurascaia, Shotgun, lachurascaia.fr, relevées le 15/10/2026) =====
+const IG = 'lachurascaia', SHOTGUN = 'https://shotgun.live/fr/venues/la-churascaia';
+const SG = s => 'https://shotgun.live/fr/events/' + s;
+const SOIREES = [
+  {nom: 'Les Enfants de la Roubine', date: '2026-10-17T23:00', fin: '05:00', prix: '12,99 €', genres: ['Disco', 'Pop', 'House'], lineup: ['JeanChris BuBu', 'Capi Music'], url: SG('les-enfants-de-la-roubine-17-10-26-la-churascaia'), img: '1', desc: 'La soirée multigénérationnelle'},
+  {nom: 'Halloween Disco Inferno', date: '2026-10-31T23:00', fin: '05:00', prix: '10,99 €', genres: ['Disco', 'House'], lineup: ['Greg Herma', 'Capi Music', 'Thôm', 'Alex Vidal'], url: SG('halloween-disco-inferno-31-10-26-la-churascaia'), img: '2', desc: 'Boules à facettes, paillettes et lumières rouges'},
+  {nom: 'Disconnect × Sidney Charles', date: '2026-11-10T22:00', fin: '05:00', prix: '13,99 €', genres: ['Deep tech', 'Tech house'], lineup: ['Sidney Charles', 'Martino & Berth', 'Tibo KSRG', 'South Connection'], url: SG('disconnect-la-churascaia-10-11-26'), img: '3', desc: 'Disconnect s\'invite à la Chu'},
+];
+const PASSEES = [
+  {nom: 'Opening · 61e saison', date: '2026-10-03T23:00', genres: ['House'], lineup: ['Deron', 'Capi Music', 'Greg Herma'], img: '4'},
+  {nom: 'Tony Romera · Closing du Patio', date: '2026-09-05T23:00', genres: ['House', 'Tech house'], lineup: ['Tony Romera', 'Soubeiran', 'Capi Music', 'Vigouroux'], img: '12'},
+  {nom: 'La Blanche · Le Patio', date: '2026-08-22T23:00', genres: ['House', 'Disco'], lineup: ['Cebb', 'Capi Music', 'Benji Ben DJ', 'Benedetto & Farina'], img: '14'},
+];
+// Site officiel + « Ils ont joué ici » sur Shotgun
+const LEGENDES = ['Cerrone', 'Bob Sinclar', 'Martin Solveig', 'Richie Hawtin', 'Les Rita Mitsouko', 'Les Négresses Vertes', 'Worakls', 'Mestiza', 'Noze', 'Sébastien Léger', 'Mont Rouge', 'Yann Muller', 'Grossomoddo', 'Aaron Sevilla', 'Moojo', 'Arkadyan'];
+const POSTS = [
+  ['DeFIs5Eswkh', '17.10 · Les Enfants de la Roubine'], ['Dee6-MJkaE6', '31.10 · Halloween Disco Inferno'], ['DeXAHZpILKI', '10.11 · Disconnect'],
+  ['DdqTOwNjHkz', '03.10 · Deron · Opening'], ['DeRbb-YjN99', 'L\'Opening en images'], ['DeM2piQDFyV', 'Un samedi soir en Camargue'],
+  ['DeHpvXTDJ4j', 'La 61e est lancée'], ['DeDuvyes3wb', 'Deron ouvre la saison', 'reel'], ['DeC8os6MwAb', 'Première de la 61e'],
+  ['DecUW0XDN9x', 'Retour de la Roubine'], ['Dc9DShQjGZm', 'La dernière du Patio'], ['Dc7QQKfMImx', 'Tony Romera au Patio', 'reel'],
+  ['Dc67BNNjEYm', 'Début de soirée au Patio'], ['Dc6jB_nMt7Z', 'Photo de groupe · Patio'], ['Dc7atmciMHn', 'Fin de saison du Patio'], ['DeZQVU4sGxr', 'On se retrouve samedi', 'reel'],
+];
+const SALLE = ['DSC05590', 'DSC04863', 'DSC08461', 'DSC05560', 'DSC09015', 'DSC04782'];
+// Boutique : vrais articles et prix de lachurascaia.fr/boutique (15/10/2026)
+const SHOP = [['T-shirt « Les Enfants de la Roubine »', '35 €', '', 'roubine'], ['T-shirt 60 ans', '30 €', '45 €', '60ans'], ['Casquette Mi Casa', '30 €', '', 'micasa'],
+  ['T-shirt Trouble', '35 €', '', 'trouble'], ['T-shirt Cœur rouge', '30 €', '', 'coeur'], ['Bob Chu', '21 €', '30 €', 'bob']];
+const FAQ = [
+  ['Âge minimum', 'Établissement réservé aux personnes majeures. Contrôle avec une pièce d\'identité valide, physique : pas de photo sur le téléphone.'],
+  ['Billets', 'Les billets sont sur Shotgun : garde le QR dans ton téléphone, il est scanné à l\'entrée.'],
+  ['L\'été, le Patio', 'Aux beaux jours, la fête se passe dehors, dans le patio au milieu des pins. Depuis le 3 octobre, retour à l\'intérieur.'],
+  ['Privatiser la Chu', 'Anniversaire, séminaire, mariage : demande un devis dans l\'app ou appelle le 06 74 94 01 09.'],
+];
+const LAT = 43.694, LON = 4.276; // Vauvert
+
+// ===== Mémoire du téléphone =====
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const img = n => '' + n + '.jpg';
+const KEY = 'churascaia';
+const st = (() => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { return {}; } })();
+st.been ||= []; st.fav ||= []; st.sw ||= {}; st.seen ||= []; st.resa ||= []; st.cart ||= []; st.priv ||= [];
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch {} };
+
+// ===== Langues (comme Disconnect) : l'app est écrite en français, traduite à l'affichage. Une ligne = [fr, en, es, de] =====
+const LANGS = ['fr', 'en', 'es', 'de'], LOC = {fr:'fr-FR', en:'en-GB', es:'es-ES', de:'de-DE'};
+const LANG = LANGS.includes(st.lang) ? st.lang : LANGS.find(l => (navigator.language || '').startsWith(l)) || 'fr';
+const TXT = [
+  ['Démo · maquette non officielle', 'Demo · unofficial mock-up', 'Demo · maqueta no oficial', 'Demo · inoffizielles Modell'],
+  ['Gérant', 'Manager', 'Gerente', 'Betreiber'], ['Depuis', 'Since', 'Desde', 'Seit'], ['Langue', 'Language', 'Idioma', 'Sprache'],
+  ['Accueil', 'Home', 'Inicio', 'Start'], ['Soirées', 'Nights', 'Fiestas', 'Partys'], ['Line-up', 'Line-up', 'Line-up', 'Line-up'], ['Moments', 'Moments', 'Momentos', 'Momente'],
+  ['Concours', 'Contest', 'Concurso', 'Verlosung'], ['Jour J', 'D-Day', 'Día D', 'Tag X'], ['Moi', 'Me', 'Yo', 'Ich'],
+  ['Prochaine soirée', 'Next night', 'Próxima fiesta', 'Nächste Party'], ['Affiche de la soirée', 'Event poster', 'Cartel de la fiesta', 'Party-Plakat'],
+  ['jours', 'days', 'días', 'Tage'], ['heures', 'hours', 'horas', 'Std.'], ['min', 'min', 'min', 'Min.'], ['sec', 'sec', 'seg', 'Sek.'],
+  ['Prendre mon billet', 'Get my ticket', 'Comprar mi entrada', 'Ticket holen'], ['Ajouter à mon agenda', 'Add to my calendar', 'Añadir a mi calendario', 'In meinen Kalender'],
+  ['Ma carte Chu', 'My Chu card', 'Mi tarjeta Chu', 'Meine Chu-Karte'], ['Réserver une table', 'Book a table', 'Reservar una mesa', 'Tisch reservieren'],
+  ['M\'inscrire sur la guest list', 'Join the guest list', 'Apuntarme en la guest list', 'Auf die Gästeliste'],
+  ['La Chu', 'La Chu', 'La Chu', 'La Chu'], ['depuis 1965', 'since 1965', 'desde 1965', 'seit 1965'],
+  ['Un club mythique en pleine Camargue', 'A legendary club in the heart of the Camargue', 'Un club mítico en plena Camarga', 'Ein legendärer Club mitten in der Camargue'],
+  ['Fondée en 1965 par le manadier Jean Lafont, à Vauvert, à 10 minutes d\'Aigues-Mortes. Un patio au milieu des pins l\'été, une salle aux affiches emblématiques l\'hiver, et toutes les générations sous la même boule à facettes.',
+   'Founded in 1965 by bull breeder Jean Lafont in Vauvert, 10 minutes from Aigues-Mortes. A patio among the pines in summer, a room covered in iconic posters in winter, and every generation under the same disco ball.',
+   'Fundada en 1965 por el ganadero Jean Lafont en Vauvert, a 10 minutos de Aigues-Mortes. Un patio entre pinos en verano, una sala de carteles míticos en invierno y todas las generaciones bajo la misma bola de espejos.',
+   '1965 vom Stierzüchter Jean Lafont in Vauvert gegründet, 10 Minuten von Aigues-Mortes. Im Sommer ein Patio zwischen Pinien, im Winter ein Saal voller legendärer Plakate, und alle Generationen unter derselben Discokugel.'],
+  ['La salle de La Churascaia', 'The La Churascaia dance floor', 'La sala de La Churascaia', 'Der Saal von La Churascaia'],
+  ['ouverture', 'opened', 'apertura', 'Eröffnung'], ['saison', 'season', 'temporada', 'Saison'], ['abonnés IG', 'IG followers', 'seguidores IG', 'IG-Follower'], ['bars', 'bars', 'barras', 'Bars'],
+  ['Ils sont passés', 'They played', 'Pasaron', 'Sie waren'], ['par ici', 'here', 'por aquí', 'hier'], ['Explorer', 'Explore', 'Explorar', 'Entdecken'],
+  ['La boutique', 'The shop', 'La tienda', 'Der Shop'], ['Privatiser la Chu', 'Book the Chu', 'Alquilar la Chu', 'Die Chu mieten'], ['Le Patio 2026', 'The Patio 2026', 'El Patio 2026', 'Der Patio 2026'],
+  ['Jeu concours', 'Contest', 'Concurso', 'Verlosung'], ['Qui pour', 'Who for', '¿Quién para', 'Wer für'], ['la prochaine ?', 'the next one?', 'la próxima?', 'die nächste?'],
+  ['La playlist', 'The playlist', 'La playlist', 'Die Playlist'], ['Les classiques de la Chu', 'The Chu classics', 'Los clásicos de la Chu', 'Die Chu-Klassiker'],
+  ['Des années 70 aux années 2000 : de Dalida à Madonna, des Gipsy Kings aux Daft Punk.', 'From the 70s to the 2000s: from Dalida to Madonna, from the Gipsy Kings to Daft Punk.', 'De los 70 a los 2000: de Dalida a Madonna, de los Gipsy Kings a Daft Punk.', 'Von den 70ern bis in die 2000er: von Dalida bis Madonna, von den Gipsy Kings bis Daft Punk.'],
+  ['Nous suivre', 'Follow us', 'Síguenos', 'Folge uns'], ['Site', 'Website', 'Web', 'Website'], ['Partager', 'Share', 'Compartir', 'Teilen'], ['Boutique', 'Shop', 'Tienda', 'Shop'], ['Privatiser', 'Private hire', 'Alquilar', 'Mieten'],
+  ['Vote pour l\'artiste que tu veux voir à la Chu (votes fictifs).', 'Vote for the artist you want at the Chu (fictional votes).', 'Vota al artista que quieres ver en la Chu (votos ficticios).', 'Stimm für den Act ab, den du in der Chu sehen willst (fiktive Stimmen).'],
+  ['Vote enregistré', 'Vote saved', 'Voto registrado', 'Stimme gespeichert'], ['Lien copié', 'Link copied', 'Enlace copiado', 'Link kopiert'],
+  ['L\'app de La Churascaia : soirées, line-up, billets', 'The La Churascaia app: nights, line-up, tickets', 'La app de La Churascaia: fiestas, line-up, entradas', 'Die La-Churascaia-App: Partys, Line-up, Tickets'],
+  // Soirées
+  ['Mon passeport', 'My passport', 'Mi pasaporte', 'Mein Pass'], ['À venir', 'Coming up', 'Próximamente', 'Demnächst'], ['Note la dernière nuit', 'Rate the last night', 'Puntúa la última noche', 'Bewerte die letzte Nacht'],
+  ['Un mot sur la soirée ?', 'A word about the night?', '¿Algo sobre la fiesta?', 'Ein Wort zur Party?'], ['Envoyer mon avis', 'Send my review', 'Enviar mi opinión', 'Bewertung senden'],
+  ['Déjà vécues', 'Been there', 'Ya vividas', 'Schon erlebt'], ['Coche « J\'y étais » pour faire grimper ton niveau.', 'Tick “I was there” to level up.', 'Marca «Estuve allí» para subir de nivel.', 'Hake „Ich war da“ an, um aufzusteigen.'],
+  ['J\'y étais', 'I was there', 'Estuve allí', 'Ich war da'], ['✓ J\'y étais', '✓ I was there', '✓ Estuve allí', '✓ Ich war da'], ['Billets', 'Tickets', 'Entradas', 'Tickets'],
+  ['Line-up bientôt dévoilé', 'Line-up coming soon', 'Line-up muy pronto', 'Line-up folgt'], ['Nouvelles dates bientôt.', 'New dates soon.', 'Nuevas fechas pronto.', 'Bald neue Termine.'],
+  ['Curieux·se', 'Curious', 'Curioso/a', 'Neugierig'], ['Coche les soirées où tu étais.', 'Tick the nights you went to.', 'Marca las fiestas en las que estuviste.', 'Hake die Partys an, auf denen du warst.'],
+  ['Initié·e', 'Insider', 'Iniciado/a', 'Eingeweiht'], ['Bienvenue dans la famille.', 'Welcome to the family.', 'Bienvenido/a a la familia.', 'Willkommen in der Familie.'],
+  ['Habitué·e', 'Regular', 'Habitual', 'Stammgast'], ['Tu connais le chemin de Vauvert par cœur.', 'You know the road to Vauvert by heart.', 'Te sabes de memoria el camino a Vauvert.', 'Du kennst den Weg nach Vauvert auswendig.'],
+  ['Enfant de la Roubine', 'Child of the Roubine', 'Hijo/a de la Roubine', 'Kind der Roubine'], ['Tu fais partie des murs.', 'You\'re part of the walls.', 'Eres parte de la casa.', 'Du gehörst zum Inventar.'],
+  ['Choisis une note', 'Pick a rating', 'Elige una nota', 'Wähle eine Note'], ['Merci pour ton avis', 'Thanks for your review', 'Gracias por tu opinión', 'Danke für deine Bewertung'],
+  ['La soirée multigénérationnelle', 'The all-generations night', 'La fiesta de todas las generaciones', 'Die Party für alle Generationen'],
+  ['Boules à facettes, paillettes et lumières rouges', 'Disco balls, glitter and red lights', 'Bolas de espejos, purpurina y luces rojas', 'Discokugeln, Glitzer und rotes Licht'],
+  ['Disconnect s\'invite à la Chu', 'Disconnect takes over the Chu', 'Disconnect llega a la Chu', 'Disconnect zu Gast in der Chu'],
+  ['Opening · 61e saison', 'Opening · 61st season', 'Opening · 61.ª temporada', 'Opening · 61. Saison'], ['Tony Romera · Closing du Patio', 'Tony Romera · Patio closing', 'Tony Romera · Cierre del Patio', 'Tony Romera · Patio-Closing'],
+  ['La Blanche · Le Patio', 'La Blanche · The Patio', 'La Blanche · El Patio', 'La Blanche · Der Patio'],
+  // Line-up
+  ['Chercher un artiste…', 'Search an artist…', 'Buscar un artista…', 'Künstler suchen…'], ['Tous', 'All', 'Todos', 'Alle'], ['★ Favoris', '★ Favourites', '★ Favoritos', '★ Favoriten'],
+  ['Légendes de la Chu', 'Chu legends', 'Leyendas de la Chu', 'Chu-Legenden'], ['Résident·e', 'Resident', 'Residente', 'Resident'], ['Légende de la Chu', 'Chu legend', 'Leyenda de la Chu', 'Chu-Legende'],
+  ['Aucun artiste.', 'No artist.', 'Ningún artista.', 'Kein Künstler.'], ['Favori', 'Favourite', 'Favorito', 'Favorit'],
+  // Moments
+  ['À la une', 'Highlights', 'Destacadas', 'Highlights'], ['Les dernières publications de @lachurascaia. Touche une photo pour l\'ouvrir sur Instagram.', 'The latest posts from @lachurascaia. Tap a photo to open it on Instagram.', 'Las últimas publicaciones de @lachurascaia. Toca una foto para abrirla en Instagram.', 'Die neuesten Posts von @lachurascaia. Tippe auf ein Foto, um es auf Instagram zu öffnen.'],
+  ['Tout', 'All', 'Todo', 'Alle'], ['Photos', 'Photos', 'Fotos', 'Fotos'], ['▶ Vidéos', '▶ Videos', '▶ Vídeos', '▶ Videos'], ['La salle', 'The room', 'La sala', 'Der Saal'], ['Pas encore de vidéo.', 'No video yet.', 'Aún no hay vídeos.', 'Noch kein Video.'],
+  ['Dates', 'Dates', 'Fechas', 'Termine'], ['Opening', 'Opening', 'Opening', 'Opening'], ['Patio 2026', 'Patio 2026', 'Patio 2026', 'Patio 2026'], ['La salle', 'The room', 'La sala', 'Der Saal'],
+  ['Démo : dans la version officielle, les vraies stories Instagram de @lachurascaia arrivent ici automatiquement.', 'Demo: in the official version, @lachurascaia\'s real Instagram stories show up here automatically.', 'Demo: en la versión oficial, las stories reales de Instagram de @lachurascaia aparecen aquí automáticamente.', 'Demo: In der offiziellen Version erscheinen hier automatisch die echten Instagram-Stories von @lachurascaia.'],
+  ['Fermer', 'Close', 'Cerrar', 'Schließen'], ['Précédente', 'Previous', 'Anterior', 'Zurück'], ['Suivante', 'Next', 'Siguiente', 'Weiter'],
+  ['17.10 · Les Enfants de la Roubine', '17.10 · Les Enfants de la Roubine', '17.10 · Les Enfants de la Roubine', '17.10 · Les Enfants de la Roubine'],
+  ['L\'Opening en images', 'The Opening in pictures', 'El Opening en imágenes', 'Das Opening in Bildern'], ['Un samedi soir en Camargue', 'A Saturday night in the Camargue', 'Un sábado noche en la Camarga', 'Ein Samstagabend in der Camargue'],
+  ['La 61e est lancée', 'The 61st has begun', 'Arranca la 61.ª', 'Die 61. hat begonnen'], ['Deron ouvre la saison', 'Deron opens the season', 'Deron abre la temporada', 'Deron eröffnet die Saison'],
+  ['Première de la 61e', 'First night of the 61st', 'Primera de la 61.ª', 'Auftakt der 61.'], ['Retour de la Roubine', 'The Roubine is back', 'Vuelve la Roubine', 'Die Roubine ist zurück'],
+  ['La dernière du Patio', 'Last night at the Patio', 'La última del Patio', 'Letzte Nacht im Patio'], ['Tony Romera au Patio', 'Tony Romera at the Patio', 'Tony Romera en el Patio', 'Tony Romera im Patio'],
+  ['Début de soirée au Patio', 'Early evening at the Patio', 'Inicio de la noche en el Patio', 'Abendbeginn im Patio'], ['Photo de groupe', 'Group photo', 'Foto de grupo', 'Gruppenfoto'],
+  ['Fin de saison du Patio', 'Patio season finale', 'Fin de temporada del Patio', 'Saisonende im Patio'], ['On se retrouve samedi', 'See you Saturday', 'Nos vemos el sábado', 'Bis Samstag'],
+  // Concours
+  ['À gagner', 'To win', 'Para ganar', 'Zu gewinnen'], ['Je participe', 'Enter', 'Participo', 'Ich mache mit'], ['✓ Inscrit·e au tirage', '✓ Entered in the draw', '✓ Inscrito/a en el sorteo', '✓ Bei der Verlosung dabei'],
+  ['Inviter un pote (+1 chance)', 'Invite a friend (+1 chance)', 'Invitar a un amigo (+1 oportunidad)', 'Freund einladen (+1 Chance)'],
+  ['Concours fictif (démo). Le vrai règlement est fourni par le club.', 'Fictional contest (demo). The real rules are provided by the club.', 'Concurso ficticio (demo). Las bases reales las da el club.', 'Fiktive Verlosung (Demo). Die echten Regeln stellt der Club.'],
+  ['Comment ça marche', 'How it works', 'Cómo funciona', 'So funktioniert\'s'], ['1. Je participe', '1. I enter', '1. Participo', '1. Ich mache mit'], ['1 chance', '1 chance', '1 oportunidad', '1 Chance'],
+  ['2. J\'invite mes potes', '2. I invite my friends', '2. Invito a mis amigos', '2. Ich lade Freunde ein'], ['+1 chance par pote', '+1 chance per friend', '+1 oportunidad por amigo', '+1 Chance pro Freund'],
+  ['3. Tirage au sort', '3. The draw', '3. Sorteo', '3. Verlosung'], ['résultat dans l\'app', 'result in the app', 'resultado en la app', 'Ergebnis in der App'],
+  ['Tirage effectué', 'Draw done', 'Sorteo realizado', 'Verlosung erfolgt'], ['Tu es déjà inscrit·e', 'You\'re already in', 'Ya estás inscrito/a', 'Du bist schon dabei'],
+  ['Inscrit·e ! Bonne chance 🍀', 'You\'re in! Good luck 🍀', '¡Inscrito/a! Suerte 🍀', 'Dabei! Viel Glück 🍀'], ['+1 chance au tirage', '+1 chance in the draw', '+1 oportunidad en el sorteo', '+1 Chance bei der Verlosung'],
+  ['2 places pour Halloween Disco Inferno', '2 tickets for Halloween Disco Inferno', '2 entradas para Halloween Disco Inferno', '2 Tickets für Halloween Disco Inferno'],
+  // Jour J
+  ['Mon billet', 'My ticket', 'Mi entrada', 'Mein Ticket'], ['Billet de démonstration', 'Demo ticket', 'Entrada de demostración', 'Demo-Ticket'], ['Invité·e', 'Guest', 'Invitado/a', 'Gast'],
+  ['Touche le QR pour l\'agrandir.', 'Tap the QR to enlarge it.', 'Toca el QR para ampliarlo.', 'Tippe auf den QR-Code zum Vergrößern.'],
+  ['Ajouter au Wallet', 'Add to Wallet', 'Añadir a Wallet', 'Zu Wallet hinzufügen'], ['Wallet : dans la version officielle', 'Wallet: in the official version', 'Wallet: en la versión oficial', 'Wallet: in der offiziellen Version'],
+  ['Pas encore de billet ?', 'No ticket yet?', '¿Aún sin entrada?', 'Noch kein Ticket?'],
+  ['Si c\'est complet, inscris-toi : une place libérée, et tu es prévenu·e en premier.', 'If it\'s sold out, sign up: a spot frees up and you\'re the first to know.', 'Si está completo, apúntate: si se libera una plaza, te avisamos primero.', 'Ausverkauft? Trag dich ein: Wird ein Platz frei, erfährst du es zuerst.'],
+  ['Liste d\'attente', 'Waiting list', 'Lista de espera', 'Warteliste'], ['✓ Sur la liste d\'attente', '✓ On the waiting list', '✓ En la lista de espera', '✓ Auf der Warteliste'],
+  ['Tu seras prévenu·e si une place se libère', 'You\'ll be told if a spot frees up', 'Te avisaremos si se libera una plaza', 'Du wirst benachrichtigt, wenn ein Platz frei wird'], ['Retiré·e de la liste', 'Removed from the list', 'Eliminado/a de la lista', 'Von der Liste entfernt'],
+  ['Programme', 'Schedule', 'Programa', 'Programm'], ['Horaires indicatifs (démo) : le club les annonce sur Instagram.', 'Indicative times (demo): the club posts them on Instagram.', 'Horarios orientativos (demo): el club los anuncia en Instagram.', 'Richtzeiten (Demo): Der Club gibt sie auf Instagram bekannt.'],
+  ['Ouverture des portes', 'Doors open', 'Apertura de puertas', 'Einlass'], ['Fermeture', 'Closing', 'Cierre', 'Ende'], ['en ce moment', 'now', 'ahora', 'gerade'],
+  ['Navette', 'Shuttle', 'Lanzadera', 'Shuttle'], ['Rentre sans prendre le volant. Départs, prix et places d\'exemple (démo).', 'Get home without driving. Sample departures, prices and seats (demo).', 'Vuelve sin conducir. Salidas, precios y plazas de ejemplo (demo).', 'Ohne Auto nach Hause. Beispielzeiten, -preise und -plätze (Demo).'],
+  ['Réserver', 'Book', 'Reservar', 'Buchen'], ['✓ Réservé', '✓ Booked', '✓ Reservado', '✓ Gebucht'], ['Réservation annulée', 'Booking cancelled', 'Reserva cancelada', 'Buchung storniert'], ['retour 05:15', 'return 05:15', 'vuelta 05:15', 'Rückfahrt 05:15'],
+  ['Météo à Vauvert', 'Weather in Vauvert', 'Tiempo en Vauvert', 'Wetter in Vauvert'], ['Chargement…', 'Loading…', 'Cargando…', 'Lädt…'], ['Aujourd\'hui', 'Today', 'Hoy', 'Heute'], ['Auj.', 'Today', 'Hoy', 'Heute'],
+  ['Prévoir une veste pour la sortie : le vestiaire est là pour ça.', 'Bring a jacket for the way out: that\'s what the cloakroom is for.', 'Lleva una chaqueta para la salida: para eso está el guardarropa.', 'Nimm eine Jacke für den Heimweg mit: Dafür gibt es die Garderobe.'],
+  ['Météo indisponible hors ligne.', 'Weather unavailable offline.', 'Tiempo no disponible sin conexión.', 'Wetter offline nicht verfügbar.'],
+  ['Y aller', 'Getting there', 'Cómo llegar', 'Anfahrt'], ['📍 La Churascaia', '📍 La Churascaia', '📍 La Churascaia', '📍 La Churascaia'], ['🕚 Horaires', '🕚 Hours', '🕚 Horario', '🕚 Öffnungszeiten'], ['📞 Réservation', '📞 Bookings', '📞 Reservas', '📞 Reservierung'], ['Itinéraire', 'Directions', 'Ruta', 'Route'],
+  ['Le samedi, 23:00 → 05:00', 'Saturdays, 11pm → 5am', 'Los sábados, 23:00 → 05:00', 'Samstags, 23:00 → 05:00'],
+  ['Retrouver ma bande', 'Find my crew', 'Encontrar a mi grupo', 'Meine Clique finden'], ['Choisis un point de rendez-vous et envoie-le à tes potes.', 'Pick a meeting point and send it to your friends.', 'Elige un punto de encuentro y envíaselo a tus amigos.', 'Wähle einen Treffpunkt und schick ihn deinen Freunden.'],
+  ['Envoyer à ma bande', 'Send to my crew', 'Enviar a mi grupo', 'An meine Clique senden'], ['Message copié, colle-le à ta bande', 'Message copied, paste it to your crew', 'Mensaje copiado, pégalo a tu grupo', 'Nachricht kopiert, schick sie deiner Clique'],
+  ['L\'entrée sous la tonnelle', 'The entrance arch', 'La entrada bajo la pérgola', 'Der Eingangsbogen'], ['Sous la boule à facettes', 'Under the disco ball', 'Bajo la bola de espejos', 'Unter der Discokugel'], ['Le bar', 'The bar', 'La barra', 'Die Bar'], ['Le fumoir', 'The smoking area', 'La zona de fumadores', 'Der Raucherbereich'], ['Le vestiaire', 'The cloakroom', 'El guardarropa', 'Die Garderobe'],
+  ['Infos pratiques', 'Practical info', 'Información práctica', 'Praktische Infos'], ['Âge minimum', 'Minimum age', 'Edad mínima', 'Mindestalter'],
+  ['Établissement réservé aux personnes majeures. Contrôle avec une pièce d\'identité valide, physique : pas de photo sur le téléphone.', 'Over-18s only. Bring a valid physical ID: no photo on your phone.', 'Solo mayores de edad. Documento de identidad físico y válido: no vale una foto en el móvil.', 'Nur ab 18. Gültiger Ausweis im Original: kein Foto auf dem Handy.'],
+  ['Les billets sont sur Shotgun : garde le QR dans ton téléphone, il est scanné à l\'entrée.', 'Tickets are on Shotgun: keep the QR on your phone, it\'s scanned at the door.', 'Las entradas están en Shotgun: guarda el QR en el móvil, se escanea en la entrada.', 'Tickets gibt es auf Shotgun: Behalte den QR-Code auf dem Handy, er wird am Eingang gescannt.'],
+  ['L\'été, le Patio', 'Summer: the Patio', 'En verano, el Patio', 'Im Sommer: der Patio'],
+  ['Aux beaux jours, la fête se passe dehors, dans le patio au milieu des pins. Depuis le 3 octobre, retour à l\'intérieur.', 'In the warm months the party moves outside, to the patio among the pines. Since 3 October, we\'re back inside.', 'Con el buen tiempo la fiesta es fuera, en el patio entre pinos. Desde el 3 de octubre, volvemos dentro.', 'In der warmen Jahreszeit wird draußen im Patio zwischen den Pinien gefeiert. Seit dem 3. Oktober wieder drinnen.'],
+  ['Anniversaire, séminaire, mariage : demande un devis dans l\'app ou appelle le 06 74 94 01 09.', 'Birthday, seminar, wedding: ask for a quote in the app or call 06 74 94 01 09.', 'Cumpleaños, seminario, boda: pide presupuesto en la app o llama al 06 74 94 01 09.', 'Geburtstag, Seminar, Hochzeit: Angebot in der App anfragen oder 06 74 94 01 09 anrufen.'],
+  ['Besoin d\'aide ?', 'Need help?', '¿Necesitas ayuda?', 'Brauchst du Hilfe?'], ['Un souci sur place ? Va voir la sécurité à l\'entrée, ou appelle les secours.', 'A problem on site? Find security at the entrance, or call emergency services.', '¿Algún problema? Ve a seguridad en la entrada o llama a emergencias.', 'Ein Problem vor Ort? Geh zur Security am Eingang oder ruf den Notruf.'],
+  ['Appeler le 112', 'Call 112', 'Llamar al 112', '112 anrufen'],
+  // VIP
+  ['Choisis ta table sur le plan, puis envoie ta demande. Plan et prix d\'exemple (démo) : le club met les siens.', 'Pick your table on the map, then send your request. Sample map and prices (demo): the club adds its own.', 'Elige tu mesa en el plano y envía tu solicitud. Plano y precios de ejemplo (demo): el club pone los suyos.', 'Wähle deinen Tisch auf dem Plan und sende die Anfrage. Beispielplan und -preise (Demo): Der Club setzt seine eigenen ein.'],
+  ['Table', 'Table', 'Mesa', 'Tisch'], ['Carré VIP', 'VIP area', 'Zona VIP', 'VIP-Bereich'], ['Déjà réservée', 'Already booked', 'Ya reservada', 'Schon reserviert'], ['Table choisie', 'Chosen table', 'Mesa elegida', 'Gewählter Tisch'],
+  ['Soirée', 'Night', 'Fiesta', 'Party'], ['Personnes', 'People', 'Personas', 'Personen'], ['Moins', 'Less', 'Menos', 'Weniger'], ['Plus', 'More', 'Más', 'Mehr'], ['Formule', 'Package', 'Fórmula', 'Paket'],
+  ['Un anniversaire ? Une demande ?', 'A birthday? A request?', '¿Un cumpleaños? ¿Una petición?', 'Ein Geburtstag? Ein Wunsch?'], ['Envoyer ma demande', 'Send my request', 'Enviar mi solicitud', 'Anfrage senden'],
+  ['Le club te confirme par message (démo : rien n\'est envoyé).', 'The club confirms by message (demo: nothing is sent).', 'El club te confirma por mensaje (demo: no se envía nada).', 'Der Club bestätigt per Nachricht (Demo: nichts wird gesendet).'],
+  ['Mes réservations', 'My bookings', 'Mis reservas', 'Meine Reservierungen'], ['Retour', 'Back', 'Volver', 'Zurück'], ['Platines', 'Decks', 'Cabina', 'DJ-Pult'], ['Piste', 'Dance floor', 'Pista', 'Tanzfläche'],
+  ['Choisis une table sur le plan', 'Pick a table on the map', 'Elige una mesa en el plano', 'Wähle einen Tisch auf dem Plan'], ['Demande envoyée (démo) ✓', 'Request sent (demo) ✓', 'Solicitud enviada (demo) ✓', 'Anfrage gesendet (Demo) ✓'],
+  ['Aucune réservation pour l\'instant.', 'No bookings yet.', 'Aún no hay reservas.', 'Noch keine Reservierungen.'], ['En attente de confirmation', 'Awaiting confirmation', 'Pendiente de confirmación', 'Wartet auf Bestätigung'],
+  ['Table · 1 bouteille', 'Table · 1 bottle', 'Mesa · 1 botella', 'Tisch · 1 Flasche'], ['Carré VIP · 2 bouteilles', 'VIP area · 2 bottles', 'Zona VIP · 2 botellas', 'VIP-Bereich · 2 Flaschen'], ['Pack anniversaire', 'Birthday pack', 'Pack cumpleaños', 'Geburtstagspaket'], ['Champagne', 'Champagne', 'Champán', 'Champagner'],
+  ['dès 150 €', 'from €150', 'desde 150 €', 'ab 150 €'], ['dès 300 €', 'from €300', 'desde 300 €', 'ab 300 €'], ['dès 250 €', 'from €250', 'desde 250 €', 'ab 250 €'], ['gâteau + bouteille + cierges', 'cake + bottle + sparklers', 'tarta + botella + bengalas', 'Kuchen + Flasche + Wunderkerzen'],
+  ['Retiré·e de la guest list', 'Removed from the guest list', 'Eliminado/a de la guest list', 'Von der Gästeliste entfernt'],
+  // Boutique / privatisation
+  ['Les vrais articles et prix de lachurascaia.fr. Réserve ici, récupère au vestiaire (démo).', 'Real items and prices from lachurascaia.fr. Reserve here, pick up at the cloakroom (demo).', 'Artículos y precios reales de lachurascaia.fr. Reserva aquí y recoge en el guardarropa (demo).', 'Echte Artikel und Preise von lachurascaia.fr. Hier reservieren, an der Garderobe abholen (Demo).'],
+  ['Voir la boutique en ligne', 'See the online shop', 'Ver la tienda online', 'Zum Online-Shop'], ['Réserver au vestiaire', 'Reserve at cloakroom', 'Reservar en guardarropa', 'An Garderobe reservieren'], ['✓ Réservé au vestiaire', '✓ Reserved', '✓ Reservado', '✓ Reserviert'],
+  ['T-shirt 60 ans', '60 years T-shirt', 'Camiseta 60 años', '60-Jahre-T-Shirt'], ['Casquette Mi Casa', 'Mi Casa cap', 'Gorra Mi Casa', 'Mi-Casa-Cap'], ['T-shirt Trouble', 'Trouble T-shirt', 'Camiseta Trouble', 'Trouble-T-Shirt'], ['T-shirt Cœur rouge', 'Red Heart T-shirt', 'Camiseta Corazón rojo', 'Rotes-Herz-T-Shirt'], ['Bob Chu', 'Chu bucket hat', 'Gorro Chu', 'Chu-Fischerhut'],
+  ['T-shirt « Les Enfants de la Roubine »', '“Les Enfants de la Roubine” T-shirt', 'Camiseta «Les Enfants de la Roubine»', '„Les Enfants de la Roubine“-T-Shirt'],
+  ['Un lieu unique pour votre soirée', 'A unique venue for your event', 'Un lugar único para tu evento', 'Ein einzigartiger Ort für dein Event'],
+  ['Anniversaire, séminaire, mariage : un lieu authentique, avec son patio au milieu des pins méditerranéens.', 'Birthday, seminar, wedding: an authentic venue with its patio among Mediterranean pines.', 'Cumpleaños, seminario, boda: un lugar auténtico con su patio entre pinos mediterráneos.', 'Geburtstag, Seminar, Hochzeit: ein authentischer Ort mit Patio zwischen Mittelmeerpinien.'],
+  ['patio, 3 bars', 'patio, 3 bars', 'patio, 3 barras', 'Patio, 3 Bars'], ['de bâtiment', 'building', 'de edificio', 'Gebäude'], ['bars intérieurs', 'indoor bars', 'barras interiores', 'Bars innen'],
+  ['Demande de devis', 'Request a quote', 'Pedir presupuesto', 'Angebot anfragen'], ['Votre nom', 'Your name', 'Tu nombre', 'Dein Name'], ['Votre téléphone', 'Your phone', 'Tu teléfono', 'Deine Telefonnummer'], ['Objet de la demande', 'Type of event', 'Tipo de evento', 'Art der Veranstaltung'],
+  ['Anniversaire', 'Birthday', 'Cumpleaños', 'Geburtstag'], ['Séminaire d\'entreprise', 'Company seminar', 'Seminario de empresa', 'Firmenseminar'], ['Mariage', 'Wedding', 'Boda', 'Hochzeit'], ['Autre événement', 'Other event', 'Otro evento', 'Andere Veranstaltung'],
+  ['Date souhaitée', 'Preferred date', 'Fecha deseada', 'Wunschdatum'], ['Invités', 'Guests', 'Invitados', 'Gäste'], ['Appeler le club', 'Call the club', 'Llamar al club', 'Club anrufen'],
+  ['Démo : rien n\'est envoyé. En vrai, la demande arrive au club.', 'Demo: nothing is sent. In real life, the request goes to the club.', 'Demo: no se envía nada. En la versión real, la solicitud llega al club.', 'Demo: Nichts wird gesendet. In echt geht die Anfrage an den Club.'],
+  ['Nom et date obligatoires', 'Name and date required', 'Nombre y fecha obligatorios', 'Name und Datum erforderlich'],
+  // Moi
+  ['Mon profil', 'My profile', 'Mi perfil', 'Mein Profil'], ['Ton prénom', 'Your first name', 'Tu nombre', 'Dein Vorname'], ['Membre', 'Member', 'Miembro', 'Mitglied'],
+  ['Faire tamponner ma carte', 'Get my card stamped', 'Sellar mi tarjeta', 'Karte stempeln lassen'], ['Démo : en vrai, le staff scanne ton QR à l\'entrée.', 'Demo: in real life, staff scan your QR at the door.', 'Demo: en la versión real, el staff escanea tu QR en la entrada.', 'Demo: In echt scannt das Team deinen QR-Code am Eingang.'],
+  ['Récompenses (exemples)', 'Rewards (examples)', 'Recompensas (ejemplos)', 'Prämien (Beispiele)'], ['Vestiaire offert', 'Free cloakroom', 'Guardarropa gratis', 'Garderobe gratis'], ['Une conso offerte', 'A free drink', 'Una copa gratis', 'Ein Gratis-Drink'], ['Un bob Chu offert', 'A free Chu bucket hat', 'Un gorro Chu gratis', 'Ein Chu-Fischerhut gratis'], ['Une entrée offerte', 'A free entry', 'Una entrada gratis', 'Ein Gratis-Eintritt'],
+  ['Carte complète !', 'Card complete!', '¡Tarjeta completa!', 'Karte voll!'], ['Tampon ajouté ★', 'Stamp added ★', 'Sello añadido ★', 'Stempel hinzugefügt ★'],
+  ['Parrainage', 'Referral', 'Invita', 'Freunde werben'], ['Invite un pote : à sa première soirée, vous gagnez chacun un tampon.', 'Invite a friend: at their first night, you each get a stamp.', 'Invita a un amigo: en su primera fiesta, ganáis un sello cada uno.', 'Lade einen Freund ein: Bei seiner ersten Party bekommt ihr beide einen Stempel.'],
+  ['Mon code', 'My code', 'Mi código', 'Mein Code'], ['Envoyer mon code', 'Send my code', 'Enviar mi código', 'Code senden'],
+  ['Niveau', 'Level', 'Nivel', 'Level'], ['Soirées vécues', 'Nights attended', 'Fiestas vividas', 'Erlebte Partys'], ['Artistes favoris', 'Favourite artists', 'Artistas favoritos', 'Lieblingskünstler'], ['Articles réservés', 'Items reserved', 'Artículos reservados', 'Reservierte Artikel'],
+  ['Raccourcis', 'Shortcuts', 'Atajos', 'Shortcuts'], ['Table VIP', 'VIP table', 'Mesa VIP', 'VIP-Tisch'], ['Mon agenda', 'My calendar', 'Mi calendario', 'Mein Kalender'], ['Sur mon écran', 'On my screen', 'En mi pantalla', 'Auf den Bildschirm'],
+  ['Réglages', 'Settings', 'Ajustes', 'Einstellungen'], ['Nouvelles soirées', 'New nights', 'Nuevas fiestas', 'Neue Partys'], ['Mes artistes favoris', 'My favourite artists', 'Mis artistas favoritos', 'Meine Lieblingskünstler'], ['Rappel le jour J', 'Reminder on the day', 'Recordatorio el día D', 'Erinnerung am Tag X'],
+  ['Mettre l\'app sur mon écran', 'Add the app to my home screen', 'Añadir la app a mi pantalla', 'App zum Startbildschirm'], ['Effacer mes données', 'Delete my data', 'Borrar mis datos', 'Meine Daten löschen'],
+  ['Activé', 'On', 'Activado', 'An'], ['Désactivé', 'Off', 'Desactivado', 'Aus'], ['Effacer ton passeport, tes favoris et tes réglages ?', 'Delete your passport, favourites and settings?', '¿Borrar tu pasaporte, favoritos y ajustes?', 'Pass, Favoriten und Einstellungen löschen?'],
+  ['Safari : Partager ⬆️ puis « Sur l\'écran d\'accueil »', 'Safari: Share ⬆️ then “Add to Home Screen”', 'Safari: Compartir ⬆️ y «Añadir a pantalla de inicio»', 'Safari: Teilen ⬆️, dann „Zum Home-Bildschirm“'],
+  ['Menu ⋮ puis « Ajouter à l\'écran d\'accueil »', 'Menu ⋮ then “Add to Home screen”', 'Menú ⋮ y «Añadir a pantalla de inicio»', 'Menü ⋮, dann „Zum Startbildschirm hinzufügen“'],
+  // Stories en direct
+  ['Stories', 'Stories', 'Stories', 'Stories'], ['EN DIRECT', 'LIVE', 'EN DIRECTO', 'LIVE'], ['Tout regarder', 'Watch all', 'Ver todas', 'Alle ansehen'],
+  ['Chaque story publiée sur @lachurascaia arrive ici toute seule, et reste 24 h, comme sur Instagram.', 'Every story posted on @lachurascaia shows up here by itself and stays 24 h, just like on Instagram.', 'Cada story publicada en @lachurascaia llega aquí sola y dura 24 h, como en Instagram.', 'Jede Story von @lachurascaia erscheint hier automatisch und bleibt 24 Std., wie auf Instagram.'],
+  ['Me prévenir à chaque nouvelle story', 'Notify me of every new story', 'Avisarme de cada nueva story', 'Bei jeder neuen Story benachrichtigen'],
+  ['Le gérant publie sa story sur Instagram, comme d\'habitude. Rien de plus à faire.', 'The manager posts their story on Instagram as usual. Nothing else to do.', 'El gerente publica su story en Instagram, como siempre. Nada más que hacer.', 'Der Betreiber postet seine Story wie gewohnt auf Instagram. Sonst nichts zu tun.'],
+  ['L\'app la récupère toute seule, en moins de 2 minutes.', 'The app picks it up by itself in under 2 minutes.', 'La app la recoge sola en menos de 2 minutos.', 'Die App holt sie sich selbst, in unter 2 Minuten.'],
+  ['Les clients la voient ici et reçoivent une notification.', 'Customers see it here and get a notification.', 'Los clientes la ven aquí y reciben una notificación.', 'Die Gäste sehen sie hier und bekommen eine Benachrichtigung.'],
+  ['Elle disparaît au bout de 24 h, comme sur Instagram.', 'It disappears after 24 h, just like on Instagram.', 'Desaparece a las 24 h, como en Instagram.', 'Sie verschwindet nach 24 Std., wie auf Instagram.'],
+  ['▶ Démo : simuler une story du gérant', '▶ Demo: simulate a story from the manager', '▶ Demo: simular una story del gerente', '▶ Demo: Story des Betreibers simulieren'],
+  ['Stories réelles, synchronisées depuis Instagram.', 'Real stories, synced from Instagram.', 'Stories reales, sincronizadas desde Instagram.', 'Echte Stories, von Instagram synchronisiert.'],
+  ['Démo : stories d\'exemple faites avec les photos du compte.', 'Demo: sample stories made with the account\'s photos.', 'Demo: stories de ejemplo hechas con las fotos de la cuenta.', 'Demo: Beispiel-Stories aus den Fotos des Accounts.'],
+  ['Active · toutes les 2 min', 'On · every 2 min', 'Activa · cada 2 min', 'Aktiv · alle 2 Min.'], ['Démo (compte pas encore relié)', 'Demo (account not linked yet)', 'Demo (cuenta aún no vinculada)', 'Demo (Account noch nicht verbunden)'],
+  ['NOUVEAU', 'NEW', 'NUEVO', 'NEU'], ['Pas de story en ce moment', 'No story right now', 'No hay stories ahora', 'Gerade keine Story'],
+  ['Pas de story en ce moment. Active les notifications pour être prévenu·e.', 'No story right now. Turn on notifications to be told.', 'No hay stories ahora. Activa las notificaciones para enterarte.', 'Gerade keine Story. Aktiviere Benachrichtigungen, um nichts zu verpassen.'],
+  ['à l\'instant', 'just now', 'ahora mismo', 'gerade eben'], ['touche pour la voir', 'tap to watch', 'toca para verla', 'tippen zum Ansehen'],
+  ['La Churascaia a publié une story', 'La Churascaia posted a story', 'La Churascaia ha publicado una story', 'La Churascaia hat eine Story gepostet'],
+  ['Stories Instagram', 'Instagram stories', 'Stories de Instagram', 'Instagram-Stories'], ['Synchronisation', 'Sync', 'Sincronización', 'Synchronisierung'], ['Stories en ligne', 'Stories online', 'Stories en línea', 'Stories online'],
+  ['Vues dans l\'app (24 h)', 'Views in the app (24 h)', 'Vistas en la app (24 h)', 'Aufrufe in der App (24 Std.)'], ['Texte de la story (facultatif)', 'Story text (optional)', 'Texto de la story (opcional)', 'Story-Text (optional)'],
+  ['Publier une story (simulation)', 'Post a story (simulation)', 'Publicar una story (simulación)', 'Story posten (Simulation)'],
+  ['En vrai : le gérant publie sur Instagram, l\'app la reprend toute seule.', 'For real: the manager posts on Instagram, the app picks it up by itself.', 'En la versión real: el gerente publica en Instagram y la app la recoge sola.', 'In echt: Der Betreiber postet auf Instagram, die App übernimmt sie automatisch.'],
+  ['Story publiée sur Instagram (simulation)…', 'Story posted on Instagram (simulation)…', 'Story publicada en Instagram (simulación)…', 'Story auf Instagram gepostet (Simulation)…'],
+  ['Ce samedi, on se retrouve', 'See you this Saturday', 'Este sábado nos vemos', 'Diesen Samstag sehen wir uns'], ['billets en bio', 'tickets in bio', 'entradas en la bio', 'Tickets in der Bio'],
+  ['L\'équipe est prête ❤️‍🔥', 'The team is ready ❤️‍🔥', 'El equipo está listo ❤️‍🔥', 'Das Team ist bereit ❤️‍🔥'], ['J-2', '2 days to go', 'Faltan 2 días', 'Noch 2 Tage'],
+  ['Ça commence à se remplir', 'It\'s starting to fill up', 'Empieza a llenarse', 'Es wird langsam voll'], ['Ce soir à la Chu', 'Tonight at the Chu', 'Esta noche en la Chu', 'Heute Abend in der Chu'], ['On vous attend', 'We\'re waiting for you', 'Os esperamos', 'Wir warten auf euch'], ['Ambiance', 'Vibes', 'Ambiente', 'Stimmung'],
+  // Gérant
+  ['Espace gérant', 'Manager area', 'Espacio gerente', 'Betreiberbereich'], ['Chiffres fictifs pour la démo.', 'Fictional figures for the demo.', 'Cifras ficticias para la demo.', 'Fiktive Zahlen für die Demo.'],
+  ['Abonnement', 'Subscription', 'Suscripción', 'Abo'], ['(exemple de tarif)', '(sample price)', '(precio de ejemplo)', '(Beispielpreis)'], ['Les clients utilisent l\'app gratuitement, seul le club s\'abonne.', 'Customers use the app for free, only the club subscribes.', 'Los clientes usan la app gratis, solo el club se suscribe.', 'Gäste nutzen die App gratis, nur der Club zahlt ein Abo.'],
+  ['Actif', 'Active', 'Activa', 'Aktiv'], ['Impayé', 'Unpaid', 'Impagada', 'Unbezahlt'], ['Simuler un impayé', 'Simulate a missed payment', 'Simular un impago', 'Zahlungsausfall simulieren'], ['Réactiver l\'abonnement', 'Reactivate subscription', 'Reactivar la suscripción', 'Abo reaktivieren'],
+  ['Ajouter une soirée', 'Add a night', 'Añadir una fiesta', 'Party hinzufügen'], ['Nom de la soirée', 'Night name', 'Nombre de la fiesta', 'Name der Party'], ['Date', 'Date', 'Fecha', 'Datum'], ['Artistes, séparés par une virgule', 'Artists, comma-separated', 'Artistas, separados por comas', 'Künstler, durch Komma getrennt'],
+  ['Ajouter la soirée', 'Add the night', 'Añadir la fiesta', 'Party hinzufügen'], ['Supprimer', 'Delete', 'Eliminar', 'Löschen'], ['Ajoutée', 'Added', 'Añadida', 'Hinzugefügt'],
+  ['Réservations', 'Bookings', 'Reservas', 'Reservierungen'], ['Guest list (prochaine soirée)', 'Guest list (next night)', 'Guest list (próxima fiesta)', 'Gästeliste (nächste Party)'], ['Demandes de privatisation', 'Private hire requests', 'Solicitudes de alquiler', 'Mietanfragen'], ['Boutique : à retirer au vestiaire', 'Shop: to pick up at cloakroom', 'Tienda: para recoger en guardarropa', 'Shop: an der Garderobe abzuholen'],
+  ['Carte Chu', 'Chu card', 'Tarjeta Chu', 'Chu-Karte'], ['Cartes actives', 'Active cards', 'Tarjetas activas', 'Aktive Karten'], ['Tampons cette semaine', 'Stamps this week', 'Sellos esta semana', 'Stempel diese Woche'], ['Récompenses données', 'Rewards given', 'Recompensas dadas', 'Vergebene Prämien'],
+  ['Tamponner une carte (scanner)', 'Stamp a card (scanner)', 'Sellar una tarjeta (escáner)', 'Karte stempeln (Scanner)'], ['Scanner : dans la version officielle', 'Scanner: in the official version', 'Escáner: en la versión oficial', 'Scanner: in der offiziellen Version'],
+  ['D\'où vient le public', 'Where the crowd comes from', 'De dónde viene el público', 'Woher das Publikum kommt'], ['Âge du public', 'Crowd age', 'Edad del público', 'Alter des Publikums'], ['Artistes les plus attendus', 'Most wanted artists', 'Artistas más esperados', 'Meistgewünschte Künstler'],
+  ['Notification', 'Notification', 'Notificación', 'Benachrichtigung'], ['Ex : Last call, plus que 50 places !', 'E.g. Last call, only 50 spots left!', 'Ej.: ¡Última llamada, solo quedan 50 plazas!', 'z. B. Last Call, nur noch 50 Plätze!'], ['Envoyer aux abonnés', 'Send to subscribers', 'Enviar a los suscriptores', 'An Abonnenten senden'], ['Scanner les billets', 'Scan tickets', 'Escanear entradas', 'Tickets scannen'],
+  ['Écris un message', 'Write a message', 'Escribe un mensaje', 'Schreib eine Nachricht'], ['Envoyé (démo)', 'Sent (demo)', 'Enviado (demo)', 'Gesendet (Demo)'],
+  ['billets · prochaine soirée', 'tickets · next night', 'entradas · próxima fiesta', 'Tickets · nächste Party'], ['abonnés à l\'app', 'app subscribers', 'suscriptores de la app', 'App-Abonnenten'], ['note moyenne', 'average rating', 'nota media', 'Durchschnittsnote'], ['reviennent le mois suivant', 'come back the next month', 'vuelven el mes siguiente', 'kommen im Folgemonat wieder'],
+  ['Application suspendue', 'App suspended', 'App suspendida', 'App gesperrt'], ['L\'abonnement du club est inactif (simulation). Tout revient dès que le gérant le réactive.', 'The club\'s subscription is inactive (simulation). Everything comes back once the manager reactivates it.', 'La suscripción del club está inactiva (simulación). Todo vuelve cuando el gerente la reactive.', 'Das Abo des Clubs ist inaktiv (Simulation). Alles kommt zurück, sobald der Betreiber es reaktiviert.'],
+  ['Réactiver (démo)', 'Reactivate (demo)', 'Reactivar (demo)', 'Reaktivieren (Demo)'], ['Autres', 'Others', 'Otros', 'Andere'], ['29 € / mois', '€29 / month', '29 € / mes', '29 € / Monat'], ['(exemple)', '(example)', '(ejemplo)', '(Beispiel)'],
+];
+const pl = (n, a, b) => +n > 1 ? b : a;
+const trC = r => tr(r[0].toUpperCase() + r.slice(1)); // traduit un texte écrit en minuscule
+const RX = [ // textes avec un nombre ou un nom dedans
+  [/^il y a (\d+) min$/, n => ({en:`${n} min ago`, es:`hace ${n} min`, de:`vor ${n} Min.`}[LANG])],
+  [/^il y a (\d+) h$/, n => ({en:`${n} h ago`, es:`hace ${n} h`, de:`vor ${n} Std.`}[LANG])],
+  [/^(\d+) stories$/, n => n + ' stories'],
+  [/^dernière (.+)$/, t => ({en:'latest ', es:'última ', de:'letzte '}[LANG]) + t],
+  [/^(.*?) ?Encore (\d+) pour « (.+) »\.$/, (a, n, b) => [tr(a), {en:`${n} more for “${tr(b)}”.`, es:`${n} más para «${tr(b)}».`, de:`Noch ${n} bis „${tr(b)}“.`}[LANG]].filter(Boolean).join(' ')],
+  [/^Encore (\d+) tampons? pour : (.+)\.$/, (n, r) => ({en:`${n} more ${pl(n, 'stamp', 'stamps')} for: ${trC(r).toLowerCase()}.`, es:`${n} ${pl(n, 'sello', 'sellos')} más para: ${trC(r).toLowerCase()}.`, de:`Noch ${n} Stempel bis: ${trC(r)}.`}[LANG])],
+  [/^(\d+) \/ 10 tampons$/, n => ({en:`${n} / 10 stamps`, es:`${n} / 10 sellos`, de:`${n} / 10 Stempel`}[LANG])],
+  [/^(.+) à (\d+)$/, (r, n) => ({en:`${trC(r).toLowerCase()} at ${n}`, es:`${trC(r).toLowerCase()} con ${n}`, de:`${trC(r)} ab ${n}`}[LANG])],
+  [/^(\d+) tampons$/, n => ({en:`${n} stamps`, es:`${n} sellos`, de:`${n} Stempel`}[LANG])],
+  [/^🎁 Récompense débloquée : (.+)$/, r => ({en:'🎁 Reward unlocked: ', es:'🎁 Recompensa desbloqueada: ', de:'🎁 Prämie freigeschaltet: '}[LANG]) + tr(r)],
+  [/^Tirage dans (\d+) jours?$/, n => ({en:`Draw in ${n} ${pl(n, 'day', 'days')}`, es:`Sorteo en ${n} ${pl(n, 'día', 'días')}`, de:`Verlosung in ${n} ${pl(n, 'Tag', 'Tagen')}`}[LANG])],
+  [/^tu as (\d+) chances?$/, n => ({en:`you have ${n} ${pl(n, 'chance', 'chances')}`, es:`tienes ${n} ${pl(n, 'oportunidad', 'oportunidades')}`, de:`du hast ${n} ${pl(n, 'Chance', 'Chancen')}`}[LANG])],
+  [/^Tirage au sort le (.+) à 18h\. Bonus : chaque pote invité = 1 chance de plus\.$/, d => ({en:`Draw on ${d} at 6pm. Bonus: each friend you invite = 1 more chance.`, es:`Sorteo el ${d} a las 18:00. Extra: cada amigo invitado = 1 oportunidad más.`, de:`Verlosung am ${d} um 18 Uhr. Bonus: Jeder eingeladene Freund = 1 Chance mehr.`}[LANG])],
+  [/^(\d+) places$/, n => ({en:`${n} seats`, es:`${n} plazas`, de:`${n} Plätze`}[LANG])],
+  [/^Place réservée · départ (\S+) de (.+)$/, (h, v) => ({en:`Seat booked · departs ${h} from ${v}`, es:`Plaza reservada · salida ${h} desde ${v}`, de:`Platz gebucht · Abfahrt ${h} ab ${v}`}[LANG])],
+  [/^vent (\d+) km\/h$/, n => ({en:`wind ${n} km/h`, es:`viento ${n} km/h`, de:`Wind ${n} km/h`}[LANG])],
+  [/^(\d) sur 5$/, n => ({en:`${n} out of 5`, es:`${n} de 5`, de:`${n} von 5`}[LANG])],
+  [/^(\d+) inscrits$/, n => ({en:`${n} signed up`, es:`${n} inscritos`, de:`${n} angemeldet`}[LANG])],
+  [/^(\d+) pers\.$/, n => ({en:`${n} ppl`, es:`${n} pers.`, de:`${n} Pers.`}[LANG])],
+  [/^Tu es sur la guest list : (.+)$/, e => ({en:'You\'re on the guest list: ', es:'Estás en la guest list: ', de:'Du stehst auf der Gästeliste: '}[LANG]) + e],
+  [/^✓ Sur la guest list · (.+)$/, e => ({en:'✓ On the guest list · ', es:'✓ En la guest list · ', de:'✓ Auf der Gästeliste · '}[LANG]) + e],
+  [/^Déjà passé·e à la Chu$/, () => ({en:'Already played the Chu', es:'Ya pasó por la Chu', de:'War schon in der Chu'}[LANG])],
+  [/^(.+) réservé au vestiaire$/, a => tr(a) + ({en:' reserved at the cloakroom', es:' reservado en el guardarropa', de:' an der Garderobe reserviert'}[LANG])],
+  [/^Demande envoyée : (.+), (\d+) invités$/, (t, n) => ({en:'Request sent: ', es:'Solicitud enviada: ', de:'Anfrage gesendet: '}[LANG]) + tr(t).toLowerCase() + ', ' + n + ' ' + tr('Invités').toLowerCase()],
+  [/^✓ (.+)$/, a => '✓ ' + tr(a)],
+  [/^(\p{Extended_Pictographic}️?) (.+)$/u, (e, s) => e + ' ' + tr(s)],
+  [/^(.+) (\p{Extended_Pictographic}️?)$/u, (s, e) => tr(s) + ' ' + e],
+];
+const DICT = Object.fromEntries(TXT.map(r => [r[0], r[LANGS.indexOf(LANG)]]));
+function tr(s) {
+  if (LANG === 'fr' || !s || !s.trim()) return s;
+  const k = s.trim(), pre = s.match(/^\s*/)[0], post = s.match(/\s*$/)[0];
+  let out = DICT[k];
+  if (out == null) for (const [re, f] of RX) { const m = k.match(re); if (m) { out = f(...m.slice(1)); break; } }
+  if (out == null && k.includes(' · ')) out = k.split(' · ').map(tr).join(' · ');
+  return pre + (out ?? k) + post;
+}
+function trDom(root) { // traduit les textes et attributs d'un morceau de page
+  if (LANG === 'fr') return;
+  if (root.nodeType === 3) { if (!root.parentNode?.closest('script,style')) root.nodeValue = tr(root.nodeValue); return; }
+  if (root.nodeType !== 1 || root.closest('script,style')) return;
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let n;
+  while ((n = w.nextNode())) { const v = tr(n.nodeValue); if (v !== n.nodeValue) n.nodeValue = v; }
+  [root, ...root.querySelectorAll('[placeholder],[aria-label],[title],img[alt],option')].forEach(e => ['placeholder', 'aria-label', 'title', 'alt'].forEach(a => e.hasAttribute?.(a) && e.setAttribute(a, tr(e.getAttribute(a)))));
+}
+function setLang(l) { st.lang = l; save(); location.reload(); }
+document.documentElement.lang = LANG;
+
+// ===== Outils =====
+const fmt = (d, o) => new Date(d).toLocaleDateString(LOC[LANG], o);
+const now = () => new Date();
+function toast(m) { navigator.vibrate?.(15); const t = $('toast'); t.textContent = tr(m); t.classList.add('on'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('on'), 2600); }
+function go(t) {
+  document.querySelectorAll('section').forEach(s => s.classList.toggle('on', s.id === t));
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  scrollTo(0, 0);
+}
+$('nav').onclick = e => { const b = e.target.closest('button'); if (b) go(b.dataset.t); };
+function shareText(t, done) { t = tr(t); navigator.share ? navigator.share({text: t}).then(done || (() => {})).catch(() => {}) : navigator.clipboard?.writeText(t).then(() => { toast('Message copié, colle-le à ta bande'); done?.(); }); }
+
+const EVENTS = [...SOIREES, ...(st.extra || [])].sort((a, b) => a.date.localeCompare(b.date)).map((e, i) => ({...e, id: 'e' + i, img: e.img || String(i % POSTS.length + 1)}));
+const PAST = PASSEES.map((e, i) => ({...e, id: 'p' + i}));
+const upcoming = () => EVENTS.filter(e => new Date(e.date) > new Date(+now() - 6 * 3600e3));
+const NEXT = upcoming()[0] || EVENTS[EVENTS.length - 1];
+const LEVELS = [[0, 'Curieux·se', 'Coche les soirées où tu étais.'], [1, 'Initié·e', 'Bienvenue dans la famille.'], [3, 'Habitué·e', 'Tu connais le chemin de Vauvert par cœur.'], [6, 'Enfant de la Roubine', 'Tu fais partie des murs.']];
+
+// ===== Accueil =====
+$('bulbs').innerHTML = Array.from({length: 17}, (_, i) => { // ampoules le long des deux guirlandes du patio
+  const x = i * 25, t = (x % 200) / 200, [a, b] = x < 200 ? [4, 8] : [8, 4];
+  return `<circle cx="${x}" cy="${(1 - t) ** 2 * a + 2 * (1 - t) * t * 44 + t * t * b + 4}" r="3.2"/>`;
+}).join('');
+$('nx-name').textContent = NEXT.nom;
+$('nx-when').textContent = fmt(NEXT.date, {weekday: 'long', day: 'numeric', month: 'long'}) + ' · ' + NEXT.date.slice(11, 16) + (NEXT.fin ? ' → ' + NEXT.fin : '');
+$('nx-lu').textContent = NEXT.lineup.join(' · ');
+$('nx-poster').src = img(NEXT.img);
+$('nx-buy').href = NEXT.url || SHOTGUN;
+function tick() {
+  const s = Math.max(0, (new Date(NEXT.date) - now()) / 1000);
+  $('count').innerHTML = [[s / 86400, 'jours'], [s / 3600 % 24, 'heures'], [s / 60 % 60, 'min'], [s % 60, 'sec']]
+    .map(([v, l]) => `<div><b>${String(Math.floor(v)).padStart(2, '0')}</b><span>${tr(l)}</span></div>`).join('');
+}
+tick(); setInterval(tick, 1000);
+$('legend').innerHTML = LEGENDES.map(a => `<span>${esc(a)}</span>`).join('');
+$('links').innerHTML = [['Instagram', 'https://www.instagram.com/' + IG + '/'], ['Shotgun', SHOTGUN], ['Site', 'https://www.lachurascaia.fr/'], ['TikTok', 'https://www.tiktok.com/search?q=lachurascaia'], ['Facebook', 'https://www.facebook.com/search/top?q=La%20Churascaia']]
+  .map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${l}</a>`).join('') + `<a href="#" onclick="share();return false">Partager</a>`;
+const SONDAGE = [['Cerrone', 171], ['Bob Sinclar', 148], ['Sébastien Léger', 117], ['Tony Romera', 96]]; // votes fictifs
+function renderPoll() {
+  const voted = st.vote != null, tot = SONDAGE.reduce((a, [, n]) => a + n, 0) + (voted ? 1 : 0);
+  $('poll').innerHTML = `<p class="mut">Vote pour l'artiste que tu veux voir à la Chu (votes fictifs).</p>` + SONDAGE.map(([a, n], i) => {
+    const p = Math.round((n + (st.vote === i ? 1 : 0)) / tot * 100);
+    return `<button class="${st.vote === i ? 'me' : ''}" onclick="vote(${i})"><i style="width:${voted ? p : 0}%"></i><span><b>${esc(a)}</b>${voted ? p + ' %' : ''}</span></button>`;
+  }).join('');
+}
+function vote(i) { st.vote = i; save(); renderPoll(); toast('Vote enregistré'); }
+function share() {
+  const d = {title: 'La Churascaia', text: tr('L\'app de La Churascaia : soirées, line-up, billets'), url: location.href.split('?')[0]};
+  navigator.share ? navigator.share(d).catch(() => {}) : navigator.clipboard?.writeText(d.url).then(() => toast('Lien copié'));
+}
+function ics() { // ajoute la prochaine soirée à l'agenda du téléphone
+  const z = d => new Date(d).toISOString().replace(/[-:]|\.\d+/g, '');
+  const end = new Date(NEXT.date.slice(0, 10) + 'T' + (NEXT.fin || '05:00')); end.setDate(end.getDate() + 1);
+  const body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//La Churascaia demo//FR', 'BEGIN:VEVENT', 'UID:' + NEXT.id + '@churascaia-demo',
+    'DTSTAMP:' + z(now()), 'DTSTART:' + z(NEXT.date), 'DTEND:' + z(end), 'SUMMARY:' + NEXT.nom + ' · La Churascaia',
+    'LOCATION:La Churascaia\\, Sainte-Anne\\, 30600 Vauvert', 'URL:' + (NEXT.url || SHOTGUN), 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([body], {type: 'text/calendar'})); a.download = 'churascaia-' + NEXT.date.slice(0, 10) + '.ics'; a.click();
+}
+
+// ===== Soirées + passeport =====
+function evCard(e, isPast) {
+  const on = st.been.includes(e.id);
+  const when = isPast ? fmt(e.date, {day: 'numeric', month: 'short', year: 'numeric'}) : fmt(e.date, {weekday: 'short', day: 'numeric', month: 'short'}) + ' · ' + e.date.slice(11, 16);
+  const action = isPast ? `<button class="been ${on ? 'on' : ''}" onclick="been('${e.id}')">${on ? '✓ J\'y étais' : 'J\'y étais'}</button>`
+    : `<a class="been" href="${esc(e.url || SHOTGUN)}" target="_blank" rel="noopener">Billets${e.prix ? ' · ' + esc(e.prix) : ''}</a>`;
+  return `<div class="card ev ${isPast ? '' : 'neon'}"><img src="${img(e.img)}" alt="" loading="lazy"><div class="b">
+    <span class="tag ${isPast ? '' : 'ta'}">${when}</span>${(e.genres || []).slice(0, 2).map(g => `<span class="tag tb">${esc(g)}</span>`).join('')}
+    <h3>${esc(e.nom)}</h3>${e.desc ? `<div class="mut" style="font-size:12px">${esc(e.desc)}</div>` : ''}<div class="lu">${e.lineup.length ? e.lineup.map(esc).join(' · ') : 'Line-up bientôt dévoilé'}</div>${action}</div></div>`;
+}
+function renderEvents() {
+  $('ev-next').innerHTML = upcoming().map(e => evCard(e, false)).join('') || '<p class="mut pad">Nouvelles dates bientôt.</p>';
+  $('ev-past').innerHTML = PAST.map(e => evCard(e, true)).join('');
+  const n = st.been.length, L = LEVELS.filter(l => n >= l[0]).pop(), nx = LEVELS.find(l => l[0] > n);
+  $('pp-n').textContent = n; $('pp-lvl').textContent = L[1];
+  $('pp-txt').textContent = nx ? `${L[2]} Encore ${nx[0] - n} pour « ${nx[1]} ».` : L[2];
+  $('pp-bar').style.width = Math.min(100, n / 6 * 100) + '%';
+}
+function been(id) { const i = st.been.indexOf(id); i < 0 ? st.been.push(id) : st.been.splice(i, 1); save(); renderEvents(); renderMe(); }
+$('last-name').textContent = PAST[0].nom + ' · ' + fmt(PAST[0].date, {day: 'numeric', month: 'long'});
+function renderStars() { $('stars').innerHTML = [1, 2, 3, 4, 5].map(i => `<button class="${i <= (st.note || 0) ? 'on' : ''}" onclick="st.note=${i};save();renderStars()" aria-label="${i} sur 5">★</button>`).join(''); }
+$('review').value = st.review || '';
+function sendReview() { if (!st.note) return toast('Choisis une note'); st.review = $('review').value.trim(); save(); toast('Merci pour ton avis'); }
+
+// ===== Line-up =====
+const RESIDENTS = ['Capi Music', 'Greg Herma', 'JeanChris BuBu'];
+const ARTISTS = {};
+[...EVENTS, ...PAST].forEach(e => e.lineup.forEach(a => (ARTISTS[a] ||= []).push(e)));
+LEGENDES.forEach(a => ARTISTS[a] ||= []);
+let filter = 'all';
+$('chips').innerHTML = [['all', 'Tous'], ['fav', '★ Favoris'], ['next', 'À venir'], ['legend', 'Légendes de la Chu']]
+  .map(([k, l]) => `<button data-k="${k}" class="${k === 'all' ? 'on' : ''}">${l}</button>`).join('');
+$('chips').onclick = e => { const b = e.target.closest('button'); if (!b) return; filter = b.dataset.k; [...$('chips').children].forEach(c => c.classList.toggle('on', c === b)); renderArtists(); };
+function renderArtists() {
+  const q = $('q').value.trim().toLowerCase(), up = upcoming();
+  const list = Object.entries(ARTISTS).filter(([a, evs]) => a.toLowerCase().includes(q) && (filter === 'all'
+    || (filter === 'fav' && st.fav.includes(a)) || (filter === 'next' && evs.some(e => up.includes(e))) || (filter === 'legend' && LEGENDES.includes(a))));
+  $('arts').innerHTML = list.map(([a, evs]) => `<div class="art"><div class="av">${esc(a.replace(/^Les /, '').replace(/[^A-Za-zÀ-ÿ0-9]/g, '').slice(0, 2).toUpperCase())}</div>
+    <div><b>${esc(a)}</b><span class="mut">${evs.length ? evs.map(e => fmt(e.date, {day: 'numeric', month: 'short'})).join(' · ') : 'Déjà passé·e à la Chu'}</span>
+    ${RESIDENTS.includes(a) ? '<span class="tag tb">Résident·e</span>' : LEGENDES.includes(a) ? '<span class="tag">Légende de la Chu</span>' : ''}</div>
+    <button class="fav ${st.fav.includes(a) ? 'on' : ''}" data-a="${esc(a)}" aria-label="Favori">★</button></div>`).join('') || '<p class="mut pad">Aucun artiste.</p>';
+}
+$('arts').onclick = e => { const b = e.target.closest('.fav'); if (!b) return; const a = b.dataset.a, i = st.fav.indexOf(a); i < 0 ? st.fav.push(a) : st.fav.splice(i, 1); save(); renderArtists(); renderMe(); };
+
+// ===== Moments =====
+function renderGrid(k = 'all') {
+  $('grid').innerHTML = POSTS.map(([code, cap, type], i) => (k === 'all' || (type || 'p') === k) ?
+    `<a href="https://www.instagram.com/${type || 'p'}/${code}/" target="_blank" rel="noopener"><img loading="lazy" src="${img(i + 1)}" alt="${esc(cap)}">${type ? '<span class="vid">▶</span>' : ''}<span>${esc(cap)}</span></a>` : '').join('') || '<p class="mut pad">Pas encore de vidéo.</p>';
+}
+renderGrid();
+$('mchips').onclick = e => { const b = e.target.closest('button'); if (!b) return; [...$('mchips').children].forEach(c => c.classList.toggle('on', c === b)); renderGrid(b.dataset.k); };
+$('salle').innerHTML = SALLE.map(f => `<a href="https://www.lachurascaia.fr/" target="_blank" rel="noopener"><img loading="lazy" src="${img('site-' + f)}" alt=""></a>`).join('');
+// Stories « à la une », comme sur le profil (DATES, PLAYLIST…). Démo : photos des posts.
+const STORIES = [['Dates', ['1', '2', '3']], ['Opening', ['4', '5', '7', '9']], ['Patio 2026', ['13', '14', '15', '11']], ['La salle', SALLE.slice(0, 4).map(f => 'site-' + f)], ['Boutique', ['shop-roubine', 'shop-micasa', 'shop-bob']]];
+let GRP = STORIES, sg = 0, si = 0; // GRP = groupes affichés (à la une ou stories en direct)
+function renderStories() {
+  $('stories').innerHTML = STORIES.map(([n, imgs], g) => `<button class="${st.seen.includes(n) ? 'seen' : ''}" onclick="openStory(${g})"><div class="ring"><img src="${img(imgs[0])}" alt=""></div>${tr(n)}</button>`).join('');
+}
+function showStory() {
+  const [n, items] = GRP[sg], it = items[si], o = typeof it === 'string' ? {src: img(it)} : it, v = $('st-vid');
+  $('st-name').textContent = 'lachurascaia · ' + (o.time ? ago(o.time) : tr(n));
+  $('st-txt').textContent = o.txt ? tr(o.txt) : '';
+  $('st-ft').hidden = !!o.real;
+  $('st-bars').innerHTML = items.map((_, k) => `<i class="${k < si ? 'done' : k === si ? 'cur' : ''}"><b></b></i>`).join('');
+  const bar = $('st-bars').querySelector('.cur b');
+  v.pause(); v.hidden = !o.video; $('st-img').hidden = !!o.video;
+  if (o.video) { v.src = o.src; v.onloadedmetadata = () => bar.style.animationDuration = v.duration + 's'; v.play().catch(() => {}); }
+  else $('st-img').src = o.src;
+  bar.onanimationend = () => stStep(1);
+  if (o.id && !st.lseen.includes(o.id)) { st.lseen.push(o.id); save(); }
+}
+function openStory(g, groups = STORIES, i = 0) { GRP = groups; sg = g; si = i; $('story').classList.add('on'); showStory(); }
+function stStep(d) {
+  si += d;
+  if (si < 0) si = 0;
+  else if (si >= GRP[sg][1].length) {
+    const n = GRP[sg][0];
+    if (GRP === STORIES && !st.seen.includes(n)) { st.seen.push(n); save(); }
+    if (++sg >= GRP.length) return closeStory();
+    si = 0;
+  }
+  showStory();
+}
+function closeStory() { $('story').classList.remove('on'); $('st-vid').pause(); $('st-bars').innerHTML = ''; renderStories(); renderLive(); }
+
+// ===== Stories en direct =====
+// Version officielle : sync-stories.py écrit stories.json depuis l'API Instagram (compte pro du club) toutes les 2 min.
+// Démo (pas de stories.json) : stories d'exemple faites avec les photos du compte + celles « publiées » depuis l'Espace gérant.
+st.lseen ||= []; st.posted ||= [];
+const T0 = Date.now(), H = 3600e3;
+const DEMO_LIVE = [['16', 9 * H, 'Ce samedi, on se retrouve 🪩'], ['1', 5 * H, 'Les Enfants de la Roubine · billets en bio 🎟️'], ['9', 2 * H, 'L\'équipe est prête ❤️‍🔥'], ['site-DSC05099', 25 * 60e3, 'J-2 🎪']]
+  .map(([f, dt, txt]) => ({id: 'demo-' + f, src: img(f), time: new Date(T0 - dt).toISOString(), txt}));
+let LIVE_REAL = null, liveCount = 0;
+function liveList() { // stories de moins de 24 h, de la plus ancienne à la plus récente (comme Instagram)
+  return (LIVE_REAL || [...DEMO_LIVE, ...st.posted]).filter(o => now() - new Date(o.time) < 24 * H).sort((a, b) => a.time.localeCompare(b.time));
+}
+function ago(t) {
+  const m = Math.max(0, Math.round((now() - new Date(t)) / 60e3));
+  return tr(m < 1 ? 'à l\'instant' : m < 60 ? `il y a ${m} min` : `il y a ${Math.floor(m / 60)} h`);
+}
+function renderLive() {
+  const L = liveList(), unseen = L.filter(o => !st.lseen.includes(o.id)).length;
+  $('lv-dot').hidden = !unseen; $('lv-dot').textContent = unseen;
+  $('lv-av').classList.toggle('seen', !unseen);
+  $('lv-sum').textContent = L.length ? `${L.length} stories · dernière ${ago(L[L.length - 1].time)}` : 'Pas de story en ce moment';
+  $('lv-all').hidden = !L.length;
+  $('lv-grid').innerHTML = L.map((o, i) => `<button class="${st.lseen.includes(o.id) ? '' : 'new'}" onclick="openLive(${i})">${o.video ? `<video src="${esc(o.src)}" muted playsinline preload="metadata"></video><span class="v">▶</span>` : `<img src="${esc(o.src)}" alt="" loading="lazy">`}
+    <span class="t">${ago(o.time)}</span>${st.lseen.includes(o.id) ? '' : '<span class="n">NOUVEAU</span>'}${o.txt ? `<span class="c">${esc(tr(o.txt))}</span>` : ''}</button>`).join('')
+    || '<p class="mut" style="grid-column:span 2">Pas de story en ce moment. Active les notifications pour être prévenu·e.</p>';
+  $('lv-note').textContent = tr(LIVE_REAL ? 'Stories réelles, synchronisées depuis Instagram.' : 'Démo : stories d\'exemple faites avec les photos du compte.');
+  $('g-sync').textContent = tr(LIVE_REAL ? 'Active · toutes les 2 min' : 'Démo (compte pas encore relié)');
+  $('g-live').textContent = L.length;
+  if (L.length > liveCount && liveCount) notify();
+  liveCount = L.length;
+}
+function openLive(i) { const L = liveList(); if (L.length) openStory(0, [['live', L]], i); }
+async function loadLive() {
+  try {
+    const r = await fetch('stories.json?' + Date.now(), {cache: 'no-store'});
+    if (r.ok) LIVE_REAL = (await r.json()).map(o => ({id: o.id, src: o.url, video: o.type === 'VIDEO', time: o.time, real: true}));
+  } catch {}
+  renderLive();
+}
+let notifT;
+function notify() {
+  navigator.vibrate?.([20, 60, 20]);
+  $('notif').classList.add('on'); clearTimeout(notifT); notifT = setTimeout(() => $('notif').classList.remove('on'), 5000);
+}
+function openNotif() { $('notif').classList.remove('on'); go('live'); openLive(liveList().length - 1); }
+const SIM = [['10', 'Ça commence à se remplir 🔥'], ['6', 'Ce soir à la Chu 🪩'], ['site-DSC04863', 'Sous la boule à facettes ✨'], ['13', 'On vous attend 🦩'], ['site-DSC08461', 'Ambiance 🎪']];
+function simStory() { // le gérant publie sur Instagram → la story arrive dans l'app quelques secondes plus tard
+  const [f, t] = SIM[st.posted.length % SIM.length], txt = $('sim-txt').value.trim() || t;
+  $('sim-txt').value = '';
+  toast('Story publiée sur Instagram (simulation)…');
+  setTimeout(() => { st.posted.push({id: 'sim-' + Date.now(), src: img(f), time: new Date().toISOString(), txt}); save(); renderLive(); }, 2500);
+}
+renderStories(); renderLive(); loadLive(); setInterval(loadLive, 60e3);
+
+// ===== Jeu concours (fictif) : 2 places pour la 1re soirée à plus de 3 jours, tirage la veille à 18h =====
+const CT = upcoming().find(e => new Date(e.date) - now() > 3 * 86400e3) || NEXT;
+const CT_DRAW = new Date(new Date(CT.date.slice(0, 10) + 'T18:00') - 86400e3);
+$('ct-img').src = img(CT.img);
+$('ct-titre').textContent = '2 places pour ' + CT.nom;
+$('ct-txt').innerHTML = `<b>${esc(fmt(CT.date, {weekday: 'long', day: 'numeric', month: 'long'}))}</b> · ${esc(CT.lineup.join(' · '))}<br><span></span>`;
+$('ct-txt').querySelector('span').textContent = `Tirage au sort le ${fmt(CT_DRAW, {day: 'numeric', month: 'long'})} à 18h. Bonus : chaque pote invité = 1 chance de plus.`;
+st.ct ||= 0;
+function renderContest() {
+  const left = Math.ceil((CT_DRAW - now()) / 86400000);
+  $('ct-info').textContent = [left > 0 ? `Tirage dans ${left} jour${left > 1 ? 's' : ''}` : 'Tirage effectué', st.ct ? `tu as ${st.ct} chance${st.ct > 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ');
+  $('ct-btn').textContent = st.ct ? '✓ Inscrit·e au tirage' : 'Je participe';
+}
+function contest() { if (st.ct) return toast('Tu es déjà inscrit·e'); st.ct = 1; save(); renderContest(); toast('Inscrit·e ! Bonne chance 🍀'); }
+function contestShare() {
+  shareText(`Je tente de gagner 2 places pour ${CT.nom} à La Churascaia 🪩 ${location.href.split('?')[0]}`, () => { st.ct = Math.max(st.ct, 1) + 1; save(); renderContest(); toast('+1 chance au tirage'); });
+}
+
+// ===== Jour J =====
+$('tk-ev').textContent = NEXT.nom;
+$('tk-when').textContent = fmt(NEXT.date, {weekday: 'short', day: 'numeric', month: 'short'}) + ' · ' + NEXT.date.slice(11, 16) + (NEXT.fin ? ' → ' + NEXT.fin : '');
+$('go-h').textContent = 'Le samedi, 23:00 → 05:00';
+function drawQR(id, n, seed) { // ponytail: faux QR décoratif pour la démo, le vrai billet vient de Shotgun
+  const c = $(id).getContext('2d'); let s = seed;
+  const r = () => (s = s * 16807 % 2147483647) / 2147483647;
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+    const f = [[0, 0], [n - 7, 0], [0, n - 7]].find(([a, b]) => x >= a && x < a + 7 && y >= b && y < b + 7);
+    let on = r() > .5;
+    if (f) { const dx = x - f[0], dy = y - f[1]; on = dx === 0 || dy === 0 || dx === 6 || dy === 6 || (dx > 1 && dx < 5 && dy > 1 && dy < 5); }
+    c.fillStyle = on ? '#000' : '#fff'; c.fillRect(x, y, 1, 1);
+  }
+}
+drawQR('qr', 29, 1965);
+const SETS = [[NEXT.date.slice(11, 16), 'Ouverture des portes'], ...NEXT.lineup.slice(0, 4).map((a, i, l) => [['23:30', '01:00', '02:30', '03:45'].slice(4 - l.length)[i], a]), [NEXT.fin || '05:00', 'Fermeture']];
+function renderSets() {
+  const base = new Date(NEXT.date.slice(0, 10) + 'T00:00'), t = now();
+  const at = hm => { const [h, m] = hm.split(':').map(Number); return new Date(+base + ((h < 12 ? h + 24 : h) * 60 + m) * 60000); };
+  $('tl').innerHTML = SETS.map(([h, a], i) => {
+    const s = at(h), e = SETS[i + 1] ? at(SETS[i + 1][0]) : s, cls = t >= s && t < e ? 'live' : t >= e ? 'past' : '';
+    return `<div class="${cls}"><b>${h}</b> · ${esc(tr(a))}${cls === 'live' ? ' <span class="tag ta">' + tr('en ce moment') + '</span>' : ''}</div>`;
+  }).join('');
+}
+renderSets(); setInterval(renderSets, 60000);
+// Navette (fictive : départs, prix et places de démo)
+const BUS = [['22:00', 'Montpellier', 'Gare Saint-Roch', '12 €', 14], ['22:15', 'Nîmes', 'Gare Feuchères', '10 €', 9], ['22:30', 'Lunel', 'Gare', '8 €', 18], ['22:40', 'Aigues-Mortes', 'Porte de la Gardette', '8 €', 5]];
+st.bus ??= -1;
+function renderBus() {
+  $('bus').innerHTML = BUS.map(([h, v, pt, px, left], i) => `<div class="bus"><b class="u">${h}</b><div><b>${v}</b><div class="mut">${pt} · ${px} · ${left - (st.bus === i ? 1 : 0)} places · retour 05:15</div></div>
+    <button class="been ${st.bus === i ? 'on' : ''}" onclick="bookBus(${i})">${st.bus === i ? '✓ Réservé' : 'Réserver'}</button></div>`).join('');
+}
+function bookBus(i) { st.bus = st.bus === i ? -1 : i; save(); renderBus(); toast(st.bus < 0 ? 'Réservation annulée' : `Place réservée · départ ${BUS[i][0]} de ${BUS[i][1]}`); }
+$('meteo-t').textContent = $('wx-t').textContent = 'Météo à Vauvert';
+const wIcon = c => c === 0 ? '☀️' : c <= 3 ? '⛅' : c <= 48 ? '🌫️' : c <= 67 ? '🌧️' : c <= 77 ? '❄️' : c <= 82 ? '🌦️' : '⛈️';
+const day = NEXT.date.slice(0, 10);
+fetch(`https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,weather_code,wind_speed_10m&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Europe%2FParis&forecast_days=16`)
+  .then(r => r.json()).then(d => {
+    const D = d.daily, c = d.current, i = D.time.indexOf(day), j = i < 0 ? 0 : i;
+    $('meteo').innerHTML = `<div class="row"><span>${i < 0 ? 'Aujourd\'hui' : fmt(day, {weekday: 'short', day: 'numeric', month: 'short'})} ${wIcon(D.weathercode[j])}</span><span>${Math.round(D.temperature_2m_min[j])}° / ${Math.round(D.temperature_2m_max[j])}°</span></div>
+      <p class="mut" style="margin-top:8px">Prévoir une veste pour la sortie : le vestiaire est là pour ça.</p>`;
+    $('wx').innerHTML = `<div class="wx-now"><span class="e">${wIcon(c.weather_code)}</span><div><div class="t">${Math.round(c.temperature_2m)}°</div>
+      <div class="mut">Vauvert · <span>vent ${Math.round(c.wind_speed_10m)} km/h</span></div></div></div>
+      <div class="wx-days">${D.time.slice(0, 7).map((t, k) => `<div><b>${k ? fmt(t, {weekday: 'short'}).replace('.', '') : 'Auj.'}</b><div class="e">${wIcon(D.weathercode[k])}</div>
+        ${Math.round(D.temperature_2m_max[k])}° <span class="mut">${Math.round(D.temperature_2m_min[k])}°</span><div class="r">${D.precipitation_probability_max[k] ?? 0} %</div></div>`).join('')}</div>`;
+  }).catch(() => { $('meteo').innerHTML = $('wx').innerHTML = '<span class="mut">Météo indisponible hors ligne.</span>'; });
+$('faq').innerHTML = FAQ.map(([q, a]) => `<details><summary>${esc(q)}</summary><p class="mut">${esc(a)}</p></details>`).join('');
+function waitlist() { st.wait = !st.wait; save(); renderWait(); toast(st.wait ? 'Tu seras prévenu·e si une place se libère' : 'Retiré·e de la liste'); }
+function renderWait() { $('wait').textContent = tr(st.wait ? '✓ Sur la liste d\'attente' : 'Liste d\'attente'); }
+const MEET = ['L\'entrée sous la tonnelle', 'Sous la boule à facettes', 'Le bar', 'Le fumoir', 'Le vestiaire'];
+st.meet ??= 0;
+function renderMeet() { $('meet').innerHTML = MEET.map((m, i) => `<button class="${i === st.meet ? 'on' : ''}" onclick="st.meet=${i};save();renderMeet()">${esc(m)}</button>`).join(''); }
+function shareMeet() { shareText(`📍 ${tr(MEET[st.meet])} · La Churascaia · ${tr(NEXT.nom)}`); }
+
+// ===== Moi =====
+function setName(v) { st.name = v; save(); $('tk-name').textContent = v || tr('Invité·e'); renderFid(); }
+function renderMe() {
+  $('name').value = st.name || ''; $('tk-name').textContent = st.name || tr('Invité·e');
+  const L = LEVELS.filter(l => st.been.length >= l[0]).pop();
+  $('me-sum').innerHTML = `<div class="row"><span>Niveau</span><b>${L[1]}</b></div><div class="row"><span>Soirées vécues</span><b>${st.been.length}</b></div>
+    <div class="row"><span>Artistes favoris</span><b>${st.fav.length}</b></div><div class="row"><span>Articles réservés</span><b>${st.cart.length}</b></div>`;
+  document.querySelectorAll('.sw').forEach(b => b.classList.toggle('on', !!st.sw[b.dataset.k]));
+}
+document.querySelectorAll('.sw').forEach(b => b.onclick = () => { st.sw[b.dataset.k] = !st.sw[b.dataset.k]; save(); renderMe(); toast(st.sw[b.dataset.k] ? 'Activé' : 'Désactivé'); });
+function wipe() { if (!confirm(tr('Effacer ton passeport, tes favoris et tes réglages ?'))) return; try { localStorage.removeItem(KEY); } catch {} location.reload(); }
+function install() { toast(/iPhone|iPad/.test(navigator.userAgent) ? 'Safari : Partager ⬆️ puis « Sur l\'écran d\'accueil »' : 'Menu ⋮ puis « Ajouter à l\'écran d\'accueil »'); }
+// Carte de fidélité (récompenses d'exemple, le club choisit les siennes)
+const REWARDS = [[3, 'Vestiaire offert'], [5, 'Une conso offerte'], [8, 'Un bob Chu offert'], [10, 'Une entrée offerte']];
+st.no ||= String(Math.floor(Math.random() * 9e5) + 1e5);
+st.stamps ||= 0;
+$('ref-code').textContent = 'CHU' + st.no.slice(-4);
+function renderFid() {
+  const n = st.stamps % 10 || (st.stamps ? 10 : 0), gifts = REWARDS.map(r => r[0]);
+  $('fid-name').textContent = st.name || tr('Membre'); $('fid-no').textContent = 'N° ' + st.no;
+  $('stamps').innerHTML = Array.from({length: 10}, (_, i) => `<i class="${i < n ? 'on' : gifts.includes(i + 1) ? 'gift' : ''}">${i < n ? '' : gifts.includes(i + 1) ? '🎁' : i + 1}</i>`).join('');
+  const nx = REWARDS.find(r => r[0] > n);
+  $('fid-txt').textContent = nx ? `Encore ${nx[0] - n} tampon${nx[0] - n > 1 ? 's' : ''} pour : ${nx[1].toLowerCase()}.` : 'Carte complète !';
+  $('rewards').innerHTML = '<b class="u" style="font-size:15px">Récompenses (exemples)</b>' + REWARDS.map(([k, l]) => `<div class="row"><span>${k} tampons</span><span class="${n >= k ? '' : 'mut'}">${n >= k ? '✓ ' : ''}${esc(l)}</span></div>`).join('');
+  $('fid-mini').innerHTML = `<span>${n} / 10 tampons</span>` + (nx ? ` · <span>${esc(nx[1].toLowerCase())} à ${nx[0]}</span>` : '');
+  $('fid-dots').innerHTML = Array.from({length: 10}, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('');
+}
+function stamp() {
+  st.stamps++; save(); renderFid();
+  const n = st.stamps % 10 || 10, r = REWARDS.find(r => r[0] === n);
+  toast(r ? '🎁 Récompense débloquée : ' + r[1] : 'Tampon ajouté ★');
+}
+function refer() { shareText(`Viens à La Churascaia avec mon code ${$('ref-code').textContent} 🪩 ${location.href.split('?')[0]}`); }
+drawQR('fid-qr', 21, +st.no);
+
+// ===== Table VIP (plan et prix d'exemple : le club met les siens) =====
+const FORMULES = [['Table · 1 bouteille', 'dès 150 €'], ['Carré VIP · 2 bouteilles', 'dès 300 €'], ['Pack anniversaire', 'gâteau + bouteille + cierges'], ['Champagne', 'dès 250 €']];
+const TABLES = Array.from({length: 14}, (_, i) => ({id: (i < 4 ? 'V' : 'T') + (i < 4 ? i + 1 : i - 3), vip: i < 4, pris: [2, 6, 11].includes(i)}));
+let vipT = null, vipN = 4;
+function renderPlan() {
+  const t = i => { const x = TABLES[i]; return `<button class="tbl ${x.vip ? 'vip' : ''} ${x.pris ? 'pris' : ''} ${vipT === x.id ? 'sel' : ''}" ${x.pris ? 'disabled' : ''} onclick="vipT='${x.id}';renderPlan()" aria-label="Table ${x.id}">${x.id}</button>`; };
+  $('plan').innerHTML = `<div class="dj">Platines</div>${t(0)}<div class="floor">🪩 <span>Piste</span></div>${t(1)}${t(2)}${t(3)}${[4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map(t).join('')}<div class="bars">Le bar</div>`;
+  $('vip-t').textContent = vipT ? vipT + (vipT[0] === 'V' ? ' · ' + tr('Carré VIP') : '') : '—';
+}
+function nb(d) { vipN = Math.max(2, Math.min(20, vipN + d)); $('vip-n').textContent = vipN; }
+$('vip-ev').innerHTML = upcoming().map((e, i) => `<option value="${i}">${esc(fmt(e.date, {weekday: 'short', day: 'numeric', month: 'short'}) + ' · ' + e.nom)}</option>`).join('');
+$('vip-f').innerHTML = FORMULES.map(([f, p], i) => `<option value="${i}">${esc(tr(f))} (${esc(tr(p))})</option>`).join('');
+function sendVip() {
+  if (!vipT) return toast('Choisis une table sur le plan');
+  const e = upcoming()[+$('vip-ev').value] || NEXT;
+  st.resa.push({t: vipT, n: vipN, f: FORMULES[+$('vip-f').value][0], ev: e.nom, d: e.date, m: $('vip-msg').value.trim()});
+  save(); $('vip-msg').value = ''; vipT = null; renderPlan(); renderResa(); toast('Demande envoyée (démo) ✓');
+}
+function renderResa() {
+  $('my-resa').innerHTML = st.resa.map(r => `<div class="resa"><b>${esc(r.ev)}</b> · ${fmt(r.d, {day: 'numeric', month: 'short'})}<div class="mut">Table ${esc(r.t)} · ${r.n} pers. · ${esc(r.f)}${r.m ? ' · « ' + esc(r.m) + ' »' : ''}</div><span class="tag ta">En attente de confirmation</span></div>`).join('') || '<span class="mut">Aucune réservation pour l\'instant.</span>';
+  $('g-resa').innerHTML = [...st.resa.map(r => [`${r.t} · ${r.n} pers.`, r.f]), ['V2 · 8 pers.', 'Carré VIP · 2 bouteilles'], ['T3 · 6 pers.', 'Pack anniversaire']]
+    .map(([a, b]) => `<div class="row"><span>${esc(a)}</span><span class="mut">${esc(b)}</span></div>`).join('');
+}
+function guest() { st.guest = st.guest === NEXT.date ? null : NEXT.date; save(); renderGuest(); toast(st.guest ? 'Tu es sur la guest list : ' + NEXT.nom : 'Retiré·e de la guest list'); }
+function renderGuest() { $('guest-bt').textContent = tr(st.guest === NEXT.date ? '✓ Sur la guest list · ' + NEXT.nom : 'M\'inscrire sur la guest list'); $('g-guest').textContent = tr(214 + (st.guest === NEXT.date ? 1 : 0) + ' inscrits'); }
+
+// ===== Boutique (vrais articles) et privatisation =====
+function renderShop() {
+  $('shop-list').innerHTML = SHOP.map(([n, p, old, f], i) => `<div><img src="${img('shop-' + f)}" alt="${esc(n)}" loading="lazy"><div class="in"><b>${esc(n)}</b><span class="p">${p}</span>${old ? `<s>${old}</s>` : ''}
+    <button class="${st.cart.includes(i) ? 'on' : ''}" onclick="cart(${i})">${st.cart.includes(i) ? '✓ Réservé au vestiaire' : 'Réserver au vestiaire'}</button></div></div>`).join('');
+  $('g-shop').textContent = 23 + st.cart.length;
+}
+function cart(i) { const k = st.cart.indexOf(i); k < 0 ? st.cart.push(i) : st.cart.splice(k, 1); save(); renderShop(); renderMe(); if (k < 0) toast(SHOP[i][0] + ' réservé au vestiaire'); }
+let pvn = 80;
+function pvN(d) { pvn = Math.max(20, Math.min(800, pvn + d)); $('pv-n').textContent = pvn; }
+function sendPriv() {
+  const nom = $('pv-nom').value.trim(), d = $('pv-date').value;
+  if (!nom || !d) return toast('Nom et date obligatoires');
+  st.priv.push({nom, d, t: $('pv-type').value, n: pvn}); save(); renderPriv();
+  $('pv-nom').value = $('pv-tel').value = ''; toast(`Demande envoyée : ${$('pv-type').selectedOptions[0].text}, ${pvn} invités`);
+}
+function renderPriv() { $('g-priv').textContent = 3 + st.priv.length; }
+
+// ===== Espace gérant (chiffres fictifs) + abonnement du club =====
+function renderSub() { const off = st.sub === 'off'; $('lock').hidden = !off; $('sub-st').textContent = tr(off ? 'Impayé' : 'Actif'); $('sub-bt').textContent = tr(off ? 'Réactiver l\'abonnement' : 'Simuler un impayé'); }
+function toggleSub() { st.sub = st.sub === 'off' ? 'on' : 'off'; save(); renderSub(); }
+function addEvent() {
+  const nom = $('ad-nom').value.trim(), d = $('ad-date').value;
+  if (!nom || !d) return toast('Nom et date obligatoires');
+  (st.extra ||= []).push({nom, date: d + 'T23:00', fin: '05:00', lineup: $('ad-art').value.split(',').map(s => s.trim()).filter(Boolean), genres: ['Ajoutée']});
+  save(); location.reload();
+}
+function renderAdded() { $('ad-list').innerHTML = (st.extra || []).map((e, i) => `<div class="row"><span>${esc(e.nom)} · ${fmt(e.date, {day: 'numeric', month: 'short'})}</span><button class="been" onclick="st.extra.splice(${i},1);save();location.reload()">Supprimer</button></div>`).join(''); }
+$('kpi').innerHTML = [['486', 'billets · prochaine soirée'], ['2 140', 'abonnés à l\'app'], ['4,7★', 'note moyenne'], ['41 %', 'reviennent le mois suivant']]
+  .map(([v, l]) => `<div><b>${v}</b><span class="mut">${l}</span></div>`).join('');
+const bars = (el, rows) => { const m = Math.max(...rows.map(r => r[1])); $(el).innerHTML = rows.map(([l, v]) => `<div class="hb"><span>${esc(l)}</span><i style="width:${v / m * 50}%"></i><span class="mut">${v}</span></div>`).join(''); };
+bars('cities', [['Nîmes', 312], ['Montpellier', 268], ['Vauvert', 141], ['Lunel', 97], ['Aigues-Mortes', 74], ['Autres', 118]]);
+bars('ages', [['18-24', 388], ['25-34', 301], ['35-49', 162], ['50 +', 79]]);
+bars('wanted', SONDAGE);
+function sendPush() { const v = $('push').value.trim(); if (!v) return toast('Écris un message'); $('push').value = ''; toast('Envoyé (démo)'); }
+
+// ===== Démarrage =====
+renderStars(); renderMeet(); renderPoll(); renderEvents(); renderArtists(); renderMe(); renderFid(); renderSub(); renderAdded(); renderPlan(); renderResa(); renderGuest(); renderContest(); renderBus(); renderWait(); renderShop(); renderPriv();
+$('lang').value = LANG;
+trDom(document.body);
+new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(trDom))).observe(document.body, {childList: true, subtree: true});
+const Q = new URLSearchParams(location.search);
+if (Q.has('cap')) document.body.classList.add('cap');
+setTimeout(() => $('splash').classList.add('off'), Q.has('cap') || Q.has('tab') || Q.has('test') ? 0 : 1300);
+if (Q.get('tab') && $(Q.get('tab'))) go(Q.get('tab'));
+if (Q.has('test')) {
+  console.assert(EVENTS.length >= 3 && NEXT, 'soirées');
+  console.assert(document.querySelectorAll('#grid a').length === POSTS.length, 'moments');
+  console.assert(document.querySelectorAll('nav button').length === 8 && $('ct-titre').textContent, 'concours');
+  console.assert(document.querySelectorAll('#shop-list > div').length === SHOP.length, 'boutique');
+  const sv = [...st.seen]; openStory(0); for (let k = STORIES[0][1].length; k--;) stStep(1);
+  console.assert(sg === 1, 'stories'); closeStory(); st.seen = sv; save();
+  const lv = liveList().length; st.posted.push({id: 'test', src: img('1'), time: new Date().toISOString()}); renderLive();
+  console.assert(liveList().length === lv + 1 && $('notif').classList.contains('on') && !$('lv-dot').hidden, 'stories en direct');
+  st.posted.push({id: 'old', src: img('1'), time: new Date(Date.now() - 25 * H).toISOString()}); console.assert(liveList().length === lv + 1, 'expiration 24 h');
+  st.posted = st.posted.filter(o => !['test', 'old'].includes(o.id)); save(); $('notif').classList.remove('on'); renderLive();
+  const s0 = st.stamps; stamp(); console.assert(st.stamps === s0 + 1, 'tampons'); st.stamps = s0; save(); renderFid();
+  console.assert(LANG !== 'fr' || TXT.every(r => r.length === 4), 'traductions');
+  console.log('selftest ok');
+}
+</script>
+</body>
+</html>
